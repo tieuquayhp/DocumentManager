@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DocumentManager.DAL.Models
 {
+    [Table("IncomingDocuments")]
     public class IncomingDocument
     {
         [Key]
@@ -14,7 +15,8 @@ namespace DocumentManager.DAL.Models
         public string? DocumentCodeFromIssuer { get; set; }
         public DateTime? ReleaseDateFromIssuer { get; set; }
         public string? DocumentContent { get; set; }
-        public string? DocumentFile { get; set; }
+        public string? DocumentFile { get; set; } // Có thể là đường dẫn file hoặc tên file
+         // Foreign Keys
         public int IssuingUnitID { get; set; }
         [ForeignKey("IssuingUnitID")]
         public IssuingUnit IssuingUnit { get; set; } = null!;

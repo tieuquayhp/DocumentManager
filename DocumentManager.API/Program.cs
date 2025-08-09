@@ -1,6 +1,17 @@
+﻿using DocumentManager.API.Mapping;
+using DocumentManager.DAL.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// Đăng ký DbContext
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Đăng ký AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+// Đăng ký CORS
+builder.Services.AddCors(options => { /* ... cấu hình của bạn ... */ });
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -17,6 +28,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowMvcApp"); // Đảm bảo đã UseCors
 
 app.UseAuthorization();
 

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DocumentManager.DAL.Models
 {
+    [Table("OutgoingDocuments")]
     public class OutgoingDocument
     {
         [Key]
@@ -17,8 +13,10 @@ namespace DocumentManager.DAL.Models
         [Required(ErrorMessage = "Ngày phát hành văn bản đi không được để trống")]
         public DateTime ReleaseDate { get; set; }
         public string? DocumentContent { get; set; }
-        public string? DocumentFile { get; set; }
+        public string? DocumentFile { get; set; }   // Có thể là đường dẫn file hoặc tên file
+        // Foreign Keys
         public int IssuingUnitID { get; set; }
+        [ForeignKey("IssuingUnitID")]
         public IssuingUnit IssuingUnit { get; set; } = null!;
         public int RelatedProjectID { get; set; }
         [ForeignKey("RelatedProjectID")]
