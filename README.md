@@ -8,7 +8,7 @@ DocumentManager is a multi-project ASP.NET Core solution for managing documents,
 - **DocumentManager.DAL** – Data access layer containing the Entity Framework Core context and models.
 
 ## Prerequisites
-- [.NET SDK](https://dotnet.microsoft.com/) 6.0 or later
+- [.NET SDK](https://dotnet.microsoft.com/) 8.0 or later
 - SQL Server instance for the `DefaultConnection` connection string
 
 ## Getting Started
