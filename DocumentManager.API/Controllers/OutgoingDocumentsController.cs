@@ -4,6 +4,7 @@ using DocumentManager.DAL.Data;
 using DocumentManager.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Quic;
 
 namespace DocumentManager.API.Controllers
 {
@@ -37,12 +38,18 @@ namespace DocumentManager.API.Controllers
         }
 
         // GET: api/outgoingdocuments
+        // GET: api/outgoingdocuments?limit=5
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OutgoingDocumentDto>>> GetOutgoingDocuments()
+        public async Task<ActionResult<IEnumerable<OutgoingDocumentDto>>> GetOutgoingDocuments([FromQuery] int? limit)
         {
-            var documents = await GetFullDocumentsQuery().ToListAsync();
-            var documentDtos = _mapper.Map<IEnumerable<OutgoingDocumentDto>>(documents);
-            return Ok(documentDtos);
+            var query =  GetFullDocumentsQuery().OrderByDescending(d => d.ReleaseDate); // Sắp xếp theo ngày phát hành mới nhất
+            if(limit.HasValue && limit > 0)
+            {
+                var limitedDocuments = await query.Take(limit.Value).ToListAsync();
+                return Ok(_mapper.Map<IEnumerable<OutgoingDocumentDto>>(limitedDocuments));
+            }
+            var documents = await query.ToListAsync();
+            return Ok(_mapper.Map<IEnumerable<OutgoingDocumentDto>>(documents));
         }
 
         // GET: api/outgoingdocuments/5

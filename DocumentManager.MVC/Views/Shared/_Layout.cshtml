@@ -3,45 +3,99 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - DocumentManager.MVC</title>
+    <title>@ViewData["Title"] - Quản lý Tài liệu</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/DocumentManager.MVC.styles.css" asp-append-version="true" />
+    @* Thêm Font Awesome để có icon đẹp (tùy chọn nhưng khuyến khích) *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DocumentManager.MVC</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>QL Tài Liệu</h3>
+            </div>
+
+            <ul class="nav flex-column components">
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i> Bảng điều khiển</a>
+                </li>
+
+                <!-- Nhóm chức năng Quản lý Tài liệu -->
+                <li>
+                    <a href="#documentSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="nav-link dropdown-toggle">
+                        <i class="fas fa-file-alt"></i> Quản lý Tài liệu
+                    </a>
+                    <ul class="collapse list-unstyled" id="documentSubmenu">
+                        <li>
+                            <a class="nav-link" asp-controller="IncomingDocuments" asp-action="Index">Tài liệu đến</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <li>
+                            <a class="nav-link" asp-controller="OutgoingDocuments" asp-action="Index">Tài liệu đi</a>
                         </li>
                     </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-            </div>
+                </li>
+
+                <!-- Nhóm chức năng Danh mục -->
+                <li>
+                    <a href="#categorySubmenu" data-bs-toggle="collapse" aria-expanded="false" class="nav-link dropdown-toggle">
+                        <i class="fas fa-list"></i> Quản lý Danh mục
+                    </a>
+                    <ul class="collapse list-unstyled" id="categorySubmenu">
+                        <li>
+                            <a class="nav-link" asp-controller="Departments" asp-action="Index">Phòng ban</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" asp-controller="RelatedProjects" asp-action="Index">Dự án</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" asp-controller="IssuingUnits" asp-action="Index">Đơn vị phát hành</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" asp-controller="RecipientGroups" asp-action="Index">Nhóm nhận</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" asp-controller="OutgoingDocumentTypes" asp-action="Index">Loại tài liệu đi</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" asp-controller="OutgoingDocumentFormats" asp-action="Index">Định dạng tài liệu đi</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Nhóm chức năng Nhân sự -->
+                <li>
+                    <a class="nav-link" asp-controller="Employees" asp-action="Index"><i class="fas fa-users"></i> Quản lý Nhân viên</a>
+                </li>
+            </ul>
         </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+        <!-- Page Content -->
+        <div id="content">
+            <header class="content-header">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            @* Bạn có thể thêm Breadcrumb hoặc tên người dùng đăng nhập ở đây *@
+                            <h4>@ViewData["Title"]</h4>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+
+            <footer class="border-top footer text-muted mt-auto">
+                <div class="container-fluid">
+                    &copy; 2024 - DocumentManagement.Mvc
+                </div>
+            </footer>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - DocumentManager.MVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

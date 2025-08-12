@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DocumentManager.API.DTOs;
+using DocumentManager.API.Helpers;
 using DocumentManager.DAL.Data;
 using DocumentManager.DAL.Models;
 using Microsoft.AspNetCore.Http;
@@ -21,10 +22,35 @@ namespace DocumentManager.API.Controllers
         }
         // GET: api/Departments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DepartmentDto>>> GetDepartments()
+        public async Task<ActionResult<IEnumerable<DepartmentDto>>> GetDepartments([FromQuery] string? searchQuery,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var departments = await _context.Departments.ToListAsync();
-            return Ok(_mapper.Map<IEnumerable<DepartmentDto>>(departments));
+            // Bắt đầu với một câu truy vấn cơ sở
+            var query = _context.Departments.AsQueryable();
+
+            // 1. Áp dụng bộ lọc tìm kiếm
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                query = query.Where(d => d.DepartmentName.Contains(searchQuery));
+            }
+
+            // 2. Lấy tổng số bản ghi (trước khi phân trang)
+            var totalCount = await query.CountAsync();
+
+            // 3. Áp dụng phân trang
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var departmentDtos = _mapper.Map<List<DepartmentDto>>(items);
+
+            // 4. Tạo đối tượng PagedResult để trả về
+            var pagedResult = new PagedResult<DepartmentDto>(departmentDtos, totalCount, pageNumber, pageSize);
+
+            return Ok(pagedResult);
         }
         // GET: api/Departments/id
         [HttpGet("{id}")]

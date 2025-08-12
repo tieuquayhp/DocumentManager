@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -19,4 +19,94 @@ html {
 
 body {
   margin-bottom: 60px;
+}
+/* --- Bố cục Sidebar chuyên nghiệp --- */
+
+body {
+    overflow-x: hidden; /* Ngăn cuộn ngang */
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    background: #343a40; /* Màu nền tối cho sidebar */
+    color: #fff;
+    transition: all 0.3s;
+    min-height: 100vh; /* Luôn cao bằng màn hình */
+}
+
+    /* Kiểu cho các mục menu */
+    #sidebar .nav-link {
+        padding: 10px 15px;
+        font-size: 1.1em;
+        display: block;
+        color: #adb5bd; /* Màu chữ mặc định */
+        border-bottom: 1px solid #495057; /* Đường kẻ phân cách */
+    }
+
+        #sidebar .nav-link:hover {
+            color: #ffffff;
+            background: #495057; /* Màu nền khi di chuột qua */
+        }
+
+    /* Kiểu cho tiêu đề sidebar */
+    #sidebar .sidebar-header {
+        padding: 20px;
+        background: #212529;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    /* Kiểu cho dropdown menu */
+    #sidebar ul.components {
+        padding: 20px 0;
+    }
+
+    #sidebar ul p {
+        color: #fff;
+        padding: 10px;
+    }
+
+    #sidebar ul li a i {
+        margin-right: 10px;
+    }
+
+    /* Kiểu cho mục menu đang được chọn (active) */
+    #sidebar .nav-link.active {
+        color: #fff;
+        background: #007bff; /* Màu xanh nổi bật */
+    }
+
+a[data-bs-toggle="collapse"] {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+
+/* Nội dung chính */
+#content {
+    width: 100%;
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+/* Thêm một header nhỏ phía trên nội dung chính */
+.content-header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dee2e6;
 }

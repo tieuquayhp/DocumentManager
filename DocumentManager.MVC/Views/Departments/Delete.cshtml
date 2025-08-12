@@ -1,0 +1,22 @@
+﻿@model DocumentManager.MVC.ViewModels.DepartmentViewModel
+@{
+    ViewData["Title"] = "Xóa Phòng ban";
+}
+<h1>@ViewData["Title"]</h1>
+<h3 class="text-danger">Bạn có chắc chắn muốn xóa phòng ban này không?</h3>
+<div>
+    <h4>Thông tin phòng ban</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.DepartmentName)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.DepartmentName)
+        </dd>
+    </dl>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ID" />
+        <input type="submit" value="Xác nhận Xóa" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-secondary">Hủy bỏ</a>
+    </form>

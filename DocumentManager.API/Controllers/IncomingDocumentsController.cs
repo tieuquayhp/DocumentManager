@@ -32,10 +32,19 @@ namespace DocumentManager.API.Controllers
         }
 
         // GET: api/incomingdocuments
+        // GET: api/incomingdocuments?limit=5
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<IncomingDocumentDto>>> GetIncomingDocuments()
+        public async Task<ActionResult<IEnumerable<IncomingDocumentDto>>> GetIncomingDocuments([FromQuery] int? limit)
         {
-            var documents = await GetFullDocumentsQuery().ToListAsync();
+            var query = GetFullDocumentsQuery().OrderByDescending(d => d.ReleaseDate); // Sắp xếp theo ngày mới nhất
+
+            if (limit.HasValue && limit > 0)
+            {
+                var limitedDocuments = await query.Take(limit.Value).ToListAsync();
+                return Ok(_mapper.Map<IEnumerable<IncomingDocumentDto>>(limitedDocuments));
+            }
+
+            var documents = await query.ToListAsync();
             return Ok(_mapper.Map<IEnumerable<IncomingDocumentDto>>(documents));
         }
 

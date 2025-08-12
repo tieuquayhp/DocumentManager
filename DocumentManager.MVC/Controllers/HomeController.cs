@@ -1,21 +1,45 @@
-using DocumentManager.MVC.Models;
+﻿using DocumentManager.MVC.Models;
+using DocumentManager.MVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace DocumentManager.MVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public HomeController(ILogger<HomeController> logger)
+        // Tiêm IHttpClientFactory
+        public HomeController(IHttpClientFactory httpClientFactory)
         {
-            _logger = logger;
+            _httpClientFactory = httpClientFactory;
         }
 
-        public IActionResult Index()
+        // Sửa lại Action Index
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            var dashboardViewModel = new DashboardViewModel();
+
+            // Lấy 5 tài liệu đến mới nhất (giả sử API có endpoint này)
+            // Chúng ta sẽ tạo một endpoint API mới để lấy giới hạn số lượng
+            var incomingResponse = await client.GetAsync("api/incomingdocuments?limit=5");
+            if (incomingResponse.IsSuccessStatusCode)
+            {
+                var jsonString = await incomingResponse.Content.ReadAsStringAsync();
+                dashboardViewModel.RecentIncomingDocuments = JsonConvert.DeserializeObject<List<IncomingDocumentViewModel>>(jsonString);
+            }
+
+            // Lấy 5 tài liệu đi mới nhất
+            var outgoingResponse = await client.GetAsync("api/outgoingdocuments?limit=5");
+            if (outgoingResponse.IsSuccessStatusCode)
+            {
+                var jsonString = await outgoingResponse.Content.ReadAsStringAsync();
+                dashboardViewModel.RecentOutgoingDocuments = JsonConvert.DeserializeObject<List<OutgoingDocumentViewModel>>(jsonString);
+            }
+
+            return View(dashboardViewModel);
         }
 
         public IActionResult Privacy()
