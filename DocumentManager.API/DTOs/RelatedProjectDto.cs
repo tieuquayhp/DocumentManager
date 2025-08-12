@@ -4,7 +4,7 @@ namespace DocumentManager.API.DTOs
 {
     public class RelatedProjectDto
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string RelatedProjectName { get; set; }
     }
     // Dùng để tạo mới (Create)

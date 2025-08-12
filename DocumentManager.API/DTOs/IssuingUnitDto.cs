@@ -4,7 +4,7 @@ namespace DocumentManager.API.DTOs
 {
     public class IssuingUnitDto
     {
-        public Guid ID { get; set; }
+        public int ID { get; set; }
         public string IssuingUnitName { get; set; }
     }
     public class IssuingUnitForCreationDto

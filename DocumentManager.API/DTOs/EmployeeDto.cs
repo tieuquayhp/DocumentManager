@@ -4,7 +4,7 @@ namespace DocumentManager.API.DTOs
 {
     public class EmployeeDto
     {
-        public Guid ID { get; set; }
+        public int ID { get; set; }
         public string EmployeeName { get; set; }
         public string Email { get; set; }
         public int DepartmentID { get; set; }

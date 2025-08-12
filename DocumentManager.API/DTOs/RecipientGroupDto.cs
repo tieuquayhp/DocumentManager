@@ -4,7 +4,7 @@ namespace DocumentManager.API.DTOs
 {
     public class RecipientGroupDto
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string GroupNRecipientGroupNameame { get; set; }
     }
     // Dùng để tạo mới (Create)

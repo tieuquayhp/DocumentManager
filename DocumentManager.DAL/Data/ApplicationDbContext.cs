@@ -44,27 +44,75 @@ namespace DocumentManager.DAL.Data
         /// </summary>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Luôn gọi phương thức của lớp cơ sở trước tiên.
             base.OnModelCreating(modelBuilder);
-            // 1. Định nghĩa Khóa chính kết hợp (Composite Primary Key)
-            // Ta chỉ định rằng khóa chính của bảng RecipientGroupEmployees bao gồm cả
-            // hai cột EmployeeID và GroupID. Điều này đảm bảo một nhân viên không thể
-            // được thêm vào cùng một nhóm nhiều hơn một lần.
+
+            // --- Cấu hình cho bảng nối RecipientGroupEmployee (giữ nguyên) ---
             modelBuilder.Entity<RecipientGroupEmployee>()
                 .HasKey(re => new { re.EmployeeID, re.RecipientGroupID });
-            // 2. Cấu hình mối quan hệ Nhiều-Nhiều một cách tường minh
-            // Mặc dù EF Core có thể tự suy ra, việc định nghĩa tường minh giúp code rõ ràng hơn.
 
-            // Cấu hình mối quan hệ từ RecipientGroupEmployee -> Employee
             modelBuilder.Entity<RecipientGroupEmployee>()
-               .HasOne(re => re.Employee) // Một bản ghi RecipientGroupEmployee có một Employee...
-               .WithMany(e => e.RecipientGroupEmployees) // ...và một Employee có thể có nhiều bản ghi RecipientGroupEmployee.
-               .HasForeignKey(re => re.EmployeeID); // Khóa ngoại để liên kết là cột EmployeeID.
-            // Cấu hình mối quan hệ từ RecipientGroupEmployee -> RecipientGroup
+                .HasOne(re => re.Employee)
+                .WithMany(e => e.RecipientGroupEmployees)
+                .HasForeignKey(re => re.EmployeeID);
+
             modelBuilder.Entity<RecipientGroupEmployee>()
-                .HasOne(re => re.RecipientGroup) // Một bản ghi RecipientGroupEmployee có một RecipientGroup...
-                .WithMany(g => g.RecipientGroupEmployees) // ...và một RecipientGroup có thể có nhiều bản ghi RecipientGroupEmployee.
-                .HasForeignKey(re => re.RecipientGroupID); // Khóa ngoại để liên kết là cột GroupID.
+                .HasOne(re => re.RecipientGroup)
+                .WithMany(g => g.RecipientGroupEmployees)
+                .HasForeignKey(re => re.RecipientGroupID);
+
+            // --- SỬA LỖI: Phá vỡ các vòng lặp xóa theo tầng ---
+            // Ta xác định các mối quan hệ từ các bảng "chính" đến các bảng "phụ" (document)
+            // và chỉ định rằng khi xóa bản ghi cha, không được tự động xóa bản ghi con.
+
+            // 1. Mối quan hệ từ IssuingUnit đến các Document
+            modelBuilder.Entity<IssuingUnit>()
+                .HasMany(iu => iu.OutgoingDocuments)
+                .WithOne(od => od.IssuingUnit)
+                .OnDelete(DeleteBehavior.Restrict); // THÊM DÒNG NÀY
+
+            modelBuilder.Entity<IssuingUnit>()
+                .HasMany(iu => iu.IncomingDocuments)
+                .WithOne(id => id.IssuingUnit)
+                .OnDelete(DeleteBehavior.Restrict); // THÊM DÒNG NÀY
+
+            // 2. Mối quan hệ từ RelatedProject đến các Document
+            modelBuilder.Entity<RelatedProject>()
+                .HasMany(rp => rp.OutgoingDocuments)
+                .WithOne(od => od.RelatedProject)
+                .OnDelete(DeleteBehavior.Restrict); // THÊM DÒNG NÀY
+
+            modelBuilder.Entity<RelatedProject>()
+                .HasMany(rp => rp.IncomingDocuments)
+                .WithOne(id => id.RelatedProject)
+                .OnDelete(DeleteBehavior.Restrict); // THÊM DÒNG NÀY
+
+            // 3. Mối quan hệ từ RecipientGroup đến các Document
+            modelBuilder.Entity<RecipientGroup>()
+                .HasMany(rg => rg.OutgoingDocuments)
+                .WithOne(od => od.RecipientGroup)
+                .OnDelete(DeleteBehavior.Restrict); // THÊM DÒNG NÀY
+
+            modelBuilder.Entity<RecipientGroup>()
+                .HasMany(rg => rg.IncomingDocuments)
+                .WithOne(id => id.RecipientGroup)
+                .OnDelete(DeleteBehavior.Restrict); // THÊM DÒNG NÀY
+
+            // 4. Mối quan hệ từ OutgoingDocumentType và Format
+            modelBuilder.Entity<OutgoingDocumentType>()
+                .HasMany(odt => odt.OutgoingDocuments)
+                .WithOne(od => od.OutgoingDocumentType)
+                .OnDelete(DeleteBehavior.Restrict); // THÊM DÒNG NÀY (ĐÂY LÀ DÒNG QUAN TRỌNG NHẤT CHO LỖI CỦA BẠN)
+
+            modelBuilder.Entity<OutgoingDocumentFormat>()
+                .HasMany(odf => odf.OutgoingDocuments)
+                .WithOne(od => od.OutgoingDocumentFormat)
+                .OnDelete(DeleteBehavior.Restrict); // THÊM DÒNG NÀY
+
+            modelBuilder.Entity<OutgoingDocumentType>()
+                .HasMany(odt => odt.OutgoingDocumentFormats)
+                .WithOne(odf => odf.OutgoingDocumentType)
+                .HasForeignKey(odf => odf.OutgoingDocumentTypeId)
+                .OnDelete(DeleteBehavior.Restrict); // THÊM DÒNG NÀY
         }
 
     }

@@ -4,7 +4,7 @@ namespace DocumentManager.API.DTOs
 {
     public class OutgoingDocumentTypeDto
     {
-        public Guid ID { get; set; }
+        public int ID { get; set; }
         public string OutgoingDocumentTypeName { get; set; }
     }
     // Dùng để tạo mới (Create)

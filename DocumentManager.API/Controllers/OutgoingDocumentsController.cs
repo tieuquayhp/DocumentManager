@@ -2,7 +2,6 @@
 using DocumentManager.API.DTOs;
 using DocumentManager.DAL.Data;
 using DocumentManager.DAL.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
