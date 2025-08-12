@@ -11,7 +11,20 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Đăng ký AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 // Đăng ký CORS
-builder.Services.AddCors(options => { /* ... cấu hình của bạn ... */ });
+builder.Services.AddCors(options => {
+options.AddPolicy("AllowMvcApp",
+        policy =>
+        {
+            // WithOrigins: Liệt kê tất cả các nguồn gốc được phép.
+            // Đây chính là địa chỉ của các ứng dụng client (MVC, React, Angular...)
+            policy.WithOrigins("https://localhost:7001", "http://localhost:5001")
+
+                  // AllowAnyMethod: Cho phép các client này sử dụng bất kỳ phương thức HTTP nào (GET, POST, PUT, DELETE...).
+                  .AllowAnyMethod()
+
+                  // AllowAnyHeader: Cho phép các client này gửi bất kỳ header nào.
+                  .AllowAnyHeader();
+        });
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
