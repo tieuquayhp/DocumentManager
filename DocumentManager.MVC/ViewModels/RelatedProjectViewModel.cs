@@ -7,6 +7,6 @@ namespace DocumentManager.MVC.ViewModels
         public int ID { get; set; }
         [Display(Name = "Dự Án Liên Quan")]
         [Required]
-        public string ProjectName { get; set; }
+        public string RelatedProjectName { get; set; }
     }
 }

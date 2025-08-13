@@ -1,0 +1,23 @@
+﻿@model DocumentManager.MVC.ViewModels.EmployeeViewModel
+
+@{
+    ViewData["Title"] = "Xóa Nhân viên";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3 class="text-danger">Bạn có chắc chắn muốn xóa nhân viên này không?</h3>
+<div>
+    <h4>Thông tin nhân viên</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Name)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Name)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.DepartmentName)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.DepartmentName)</dd>
+    </dl>
+</div>

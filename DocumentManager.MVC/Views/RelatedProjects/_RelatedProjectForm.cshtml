@@ -1,0 +1,10 @@
+﻿@model DocumentManager.MVC.ViewModels.RelatedProjectViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input type="hidden" asp-for="ID" />
+
+<div class="form-group mb-3">
+    <label asp-for="RelatedProjectName" class="control-label"></label>
+    <input asp-for="RelatedProjectName" class="form-control" />
+    <span asp-validation-for="RelatedProjectName" class="text-danger"></span>
+</div>
