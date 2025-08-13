@@ -1,0 +1,18 @@
+﻿@model DocumentManager.MVC.ViewModels.OutgoingDocumentTypeViewModel
+
+@{
+    ViewData["Title"] = "Xóa Loại công văn đi";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3 class="text-danger">Bạn có chắc chắn muốn xóa loại công văn đi này không?</h3>
+<div>
+    <h4>Thông tin loại công văn đi</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.OutgoingDocumentTypeName)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.OutgoingDocumentTypeName)</dd>
+
+    </dl>
+</div>

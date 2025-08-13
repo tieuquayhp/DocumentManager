@@ -1,0 +1,10 @@
+﻿@model DocumentManager.MVC.ViewModels.IssuingUnitViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input type="hidden" asp-for="ID" />
+
+<div class="form-group mb-3">
+    <label asp-for="IssuingUnitName" class="control-label"></label>
+    <input asp-for="IssuingUnitName" class="form-control" />
+    <span asp-validation-for="IssuingUnitName" class="text-danger"></span>
+</div>

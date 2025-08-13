@@ -7,6 +7,6 @@ namespace DocumentManager.MVC.ViewModels
         public int ID { get; set; }
         [Display(Name = "Loại Văn bản Đi")]
         [Required]
-        public string TypeName { get; set; }
+        public string OutgoingDocumentTypeName { get; set; }
     }
 }

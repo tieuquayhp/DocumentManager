@@ -1,0 +1,10 @@
+﻿@model DocumentManager.MVC.ViewModels.OutgoingDocumentTypeViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input type="hidden" asp-for="ID" />
+
+<div class="form-group mb-3">
+    <label asp-for="OutgoingDocumentTypeName" class="control-label"></label>
+    <input asp-for="OutgoingDocumentTypeName" class="form-control" />
+    <span asp-validation-for="OutgoingDocumentTypeName" class="text-danger"></span>
+</div>

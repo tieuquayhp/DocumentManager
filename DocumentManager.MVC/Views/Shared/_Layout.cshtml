@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Quản lý Tài liệu</title>
+    <title>@ViewData["Title"] - Quản lý công văn</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @* Thêm Font Awesome để có icon đẹp (tùy chọn nhưng khuyến khích) *@
@@ -14,7 +14,7 @@
         <!-- Sidebar -->
         <nav id="sidebar">
             <div class="sidebar-header">
-                <h3>QL Tài Liệu</h3>
+                <h3>QL công văn</h3>
             </div>
 
             <ul class="nav flex-column components">
@@ -22,17 +22,17 @@
                     <a class="nav-link" asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i> Bảng điều khiển</a>
                 </li>
 
-                <!-- Nhóm chức năng Quản lý Tài liệu -->
+                <!-- Nhóm chức năng Quản lý công văn -->
                 <li>
                     <a href="#documentSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="nav-link dropdown-toggle">
-                        <i class="fas fa-file-alt"></i> Quản lý Tài liệu
+                        <i class="fas fa-file-alt"></i> Quản lý công văn
                     </a>
                     <ul class="collapse list-unstyled" id="documentSubmenu">
                         <li>
-                            <a class="nav-link" asp-controller="IncomingDocuments" asp-action="Index">Tài liệu đến</a>
+                            <a class="nav-link" asp-controller="IncomingDocuments" asp-action="Index">công văn đến</a>
                         </li>
                         <li>
-                            <a class="nav-link" asp-controller="OutgoingDocuments" asp-action="Index">Tài liệu đi</a>
+                            <a class="nav-link" asp-controller="OutgoingDocuments" asp-action="Index">công văn đi</a>
                         </li>
                     </ul>
                 </li>
@@ -43,9 +43,7 @@
                         <i class="fas fa-list"></i> Quản lý Danh mục
                     </a>
                     <ul class="collapse list-unstyled" id="categorySubmenu">
-                        <li>
-                            <a class="nav-link" asp-controller="Departments" asp-action="Index">Phòng ban</a>
-                        </li>
+                       
                         <li>
                             <a class="nav-link" asp-controller="RelatedProjects" asp-action="Index">Dự án</a>
                         </li>
@@ -56,10 +54,10 @@
                             <a class="nav-link" asp-controller="RecipientGroups" asp-action="Index">Nhóm nhận</a>
                         </li>
                         <li>
-                            <a class="nav-link" asp-controller="OutgoingDocumentTypes" asp-action="Index">Loại tài liệu đi</a>
+                            <a class="nav-link" asp-controller="OutgoingDocumentTypes" asp-action="Index">Loại công văn đi</a>
                         </li>
                         <li>
-                            <a class="nav-link" asp-controller="OutgoingDocumentFormats" asp-action="Index">Định dạng tài liệu đi</a>
+                            <a class="nav-link" asp-controller="OutgoingDocumentFormats" asp-action="Index">Kiểu công văn đi</a>
                         </li>
                     </ul>
                 </li>

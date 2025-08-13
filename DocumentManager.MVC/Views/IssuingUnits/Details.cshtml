@@ -1,0 +1,20 @@
+﻿@model DocumentManager.MVC.ViewModels.IssuingUnitViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết Đơn vị phát hành";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.IssuingUnitName)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.IssuingUnitName)</dd>
+    </dl>
+</div>
+<br />
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-primary">Chỉnh sửa</a> |
+    <a asp-action="Index" class="btn btn-secondary">Quay lại Danh sách</a>
+</div>
