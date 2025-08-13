@@ -40,15 +40,15 @@ namespace DocumentManager.MVC.ViewModels
         [Required]
         public int RelatedProjectID { get; set; }
 
-        [Display(Name = "Nhóm Nhận")]
-        [Required]
-        public int RecipientGroupID { get; set; }
-
+        // --- SỬA ĐỔI QUAN TRỌNG ---
+        [Display(Name = "Các Nhóm Nhận")]
+        [Required(ErrorMessage = "Vui lòng chọn ít nhất một nhóm nhận.")]
+        public List<int> SelectedRecipientGroupIDs { get; set; } = new List<int>();
         // --- Lists for Dropdowns ---
         public IEnumerable<SelectListItem>? OutgoingDocumentTypes { get; set; }
         public IEnumerable<SelectListItem>? OutgoingDocumentFormats { get; set; }
         public IEnumerable<SelectListItem>? IssuingUnits { get; set; }
         public IEnumerable<SelectListItem>? RelatedProjects { get; set; }
-        public IEnumerable<SelectListItem>? RecipientGroups { get; set; }
+        public IEnumerable<SelectListItem>? AllRecipientGroups { get; set; }
     }
 }

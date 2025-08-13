@@ -6,22 +6,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DocumentManager.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate1 : Migration
+    public partial class RestructureDatabase_RemoveDepartments_AddManyToMany : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Departments",
+                name: "Employees",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     DepartmentName = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Departments", x => x.Id);
+                    table.PrimaryKey("PK_Employees", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -77,27 +79,6 @@ namespace DocumentManager.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Employees",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeName = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    DepartmentID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employees", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Employees_Departments_DepartmentID",
-                        column: x => x.DepartmentID,
-                        principalTable: "Departments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "OutgoingDocumentFormats",
                 columns: table => new
                 {
@@ -118,45 +99,6 @@ namespace DocumentManager.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "IncomingDocuments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IncomingDocumentNumber = table.Column<int>(type: "int", nullable: false),
-                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DocumentCodeFromIssuer = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ReleaseDateFromIssuer = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DocumentContent = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DocumentFile = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IssuingUnitID = table.Column<int>(type: "int", nullable: false),
-                    RelatedProjectID = table.Column<int>(type: "int", nullable: false),
-                    RecipientGroupID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IncomingDocuments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_IncomingDocuments_IssuingUnits_IssuingUnitID",
-                        column: x => x.IssuingUnitID,
-                        principalTable: "IssuingUnits",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_IncomingDocuments_RecipientGroups_RecipientGroupID",
-                        column: x => x.RecipientGroupID,
-                        principalTable: "RecipientGroups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_IncomingDocuments_RelatedProjects_RelatedProjectID",
-                        column: x => x.RelatedProjectID,
-                        principalTable: "RelatedProjects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "RecipientGroupEmployees",
                 columns: table => new
                 {
@@ -170,14 +112,46 @@ namespace DocumentManager.DAL.Migrations
                         name: "FK_RecipientGroupEmployees_Employees_EmployeeID",
                         column: x => x.EmployeeID,
                         principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_RecipientGroupEmployees_RecipientGroups_RecipientGroupID",
                         column: x => x.RecipientGroupID,
                         principalTable: "RecipientGroups",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IncomingDocuments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IncomingDocumentNumber = table.Column<int>(type: "int", nullable: false),
+                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DocumentCodeFromIssuer = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReleaseDateFromIssuer = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DocumentContent = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DocumentFile = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IssuingUnitID = table.Column<int>(type: "int", nullable: false),
+                    RelatedProjectID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IncomingDocuments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IncomingDocuments_IssuingUnits_IssuingUnitID",
+                        column: x => x.IssuingUnitID,
+                        principalTable: "IssuingUnits",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_IncomingDocuments_RelatedProjects_RelatedProjectID",
+                        column: x => x.RelatedProjectID,
+                        principalTable: "RelatedProjects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -192,7 +166,6 @@ namespace DocumentManager.DAL.Migrations
                     DocumentFile = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IssuingUnitID = table.Column<int>(type: "int", nullable: false),
                     RelatedProjectID = table.Column<int>(type: "int", nullable: false),
-                    RecipientGroupID = table.Column<int>(type: "int", nullable: false),
                     OutgoingDocumentFormatID = table.Column<int>(type: "int", nullable: false),
                     OutgoingDocumentTypeID = table.Column<int>(type: "int", nullable: false)
                 },
@@ -218,12 +191,6 @@ namespace DocumentManager.DAL.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_OutgoingDocuments_RecipientGroups_RecipientGroupID",
-                        column: x => x.RecipientGroupID,
-                        principalTable: "RecipientGroups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_OutgoingDocuments_RelatedProjects_RelatedProjectID",
                         column: x => x.RelatedProjectID,
                         principalTable: "RelatedProjects",
@@ -231,20 +198,63 @@ namespace DocumentManager.DAL.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "IncomingDocumentRecipientGroups",
+                columns: table => new
+                {
+                    IncomingDocumentID = table.Column<int>(type: "int", nullable: false),
+                    RecipientGroupID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IncomingDocumentRecipientGroups", x => new { x.IncomingDocumentID, x.RecipientGroupID });
+                    table.ForeignKey(
+                        name: "FK_IncomingDocumentRecipientGroups_IncomingDocuments_IncomingDocumentID",
+                        column: x => x.IncomingDocumentID,
+                        principalTable: "IncomingDocuments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_IncomingDocumentRecipientGroups_RecipientGroups_RecipientGroupID",
+                        column: x => x.RecipientGroupID,
+                        principalTable: "RecipientGroups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OutgoingDocumentRecipientGroups",
+                columns: table => new
+                {
+                    OutgoingDocumentID = table.Column<int>(type: "int", nullable: false),
+                    RecipientGroupID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OutgoingDocumentRecipientGroups", x => new { x.OutgoingDocumentID, x.RecipientGroupID });
+                    table.ForeignKey(
+                        name: "FK_OutgoingDocumentRecipientGroups_OutgoingDocuments_OutgoingDocumentID",
+                        column: x => x.OutgoingDocumentID,
+                        principalTable: "OutgoingDocuments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_OutgoingDocumentRecipientGroups_RecipientGroups_RecipientGroupID",
+                        column: x => x.RecipientGroupID,
+                        principalTable: "RecipientGroups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_Employees_DepartmentID",
-                table: "Employees",
-                column: "DepartmentID");
+                name: "IX_IncomingDocumentRecipientGroups_RecipientGroupID",
+                table: "IncomingDocumentRecipientGroups",
+                column: "RecipientGroupID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_IncomingDocuments_IssuingUnitID",
                 table: "IncomingDocuments",
                 column: "IssuingUnitID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_IncomingDocuments_RecipientGroupID",
-                table: "IncomingDocuments",
-                column: "RecipientGroupID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_IncomingDocuments_RelatedProjectID",
@@ -255,6 +265,11 @@ namespace DocumentManager.DAL.Migrations
                 name: "IX_OutgoingDocumentFormats_OutgoingDocumentTypeId",
                 table: "OutgoingDocumentFormats",
                 column: "OutgoingDocumentTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OutgoingDocumentRecipientGroups_RecipientGroupID",
+                table: "OutgoingDocumentRecipientGroups",
+                column: "RecipientGroupID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OutgoingDocuments_IssuingUnitID",
@@ -272,11 +287,6 @@ namespace DocumentManager.DAL.Migrations
                 column: "OutgoingDocumentTypeID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OutgoingDocuments_RecipientGroupID",
-                table: "OutgoingDocuments",
-                column: "RecipientGroupID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_OutgoingDocuments_RelatedProjectID",
                 table: "OutgoingDocuments",
                 column: "RelatedProjectID");
@@ -291,13 +301,25 @@ namespace DocumentManager.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "IncomingDocumentRecipientGroups");
+
+            migrationBuilder.DropTable(
+                name: "OutgoingDocumentRecipientGroups");
+
+            migrationBuilder.DropTable(
+                name: "RecipientGroupEmployees");
+
+            migrationBuilder.DropTable(
                 name: "IncomingDocuments");
 
             migrationBuilder.DropTable(
                 name: "OutgoingDocuments");
 
             migrationBuilder.DropTable(
-                name: "RecipientGroupEmployees");
+                name: "Employees");
+
+            migrationBuilder.DropTable(
+                name: "RecipientGroups");
 
             migrationBuilder.DropTable(
                 name: "IssuingUnits");
@@ -309,16 +331,7 @@ namespace DocumentManager.DAL.Migrations
                 name: "RelatedProjects");
 
             migrationBuilder.DropTable(
-                name: "Employees");
-
-            migrationBuilder.DropTable(
-                name: "RecipientGroups");
-
-            migrationBuilder.DropTable(
                 name: "OutgoingDocumentTypes");
-
-            migrationBuilder.DropTable(
-                name: "Departments");
         }
     }
 }

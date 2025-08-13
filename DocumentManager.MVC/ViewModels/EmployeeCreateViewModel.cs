@@ -1,27 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DocumentManager.MVC.ViewModels
 {
     public class EmployeeCreateViewModel
     {
-        public int ID { get; set; } // Cần cho việc Edit
+        public int ID { get; set; } // Giữ lại cho chức năng Edit
 
         [Display(Name = "Tên Nhân Viên")]
         [Required(ErrorMessage = "Tên là bắt buộc.")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Display(Name = "Email")]
         [Required(ErrorMessage = "Email là bắt buộc.")]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Display(Name = "Phòng Ban")]
-        [Required(ErrorMessage = "Vui lòng chọn phòng ban.")]
-        public int DepartmentID { get; set; }
-
-        // Thuộc tính này dùng để chứa danh sách các phòng ban cho dropdown list
-        // Controller sẽ điền dữ liệu vào đây từ API.
-        public IEnumerable<SelectListItem>? Departments { get; set; }
+        public string DepartmentName { get; set; } = string.Empty; // Thay DepartmentID bằng DepartmentName
     }
 }

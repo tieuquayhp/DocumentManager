@@ -1,8 +1,9 @@
-﻿using AutoMapper;
+﻿// File: API/Controllers/OutgoingDocumentTypesController.cs
+using AutoMapper;
 using DocumentManager.API.DTOs;
+using DocumentManager.API.Helpers;
 using DocumentManager.DAL.Data;
 using DocumentManager.DAL.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,76 +15,71 @@ namespace DocumentManager.API.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+
         public OutgoingDocumentTypesController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
-        // GET: api/OutgoingDocumentTypes
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OutgoingDocumentTypeDto>>> GetOutgoingDocumentTypes()
+        public async Task<ActionResult<PagedResult<OutgoingDocumentTypeDto>>> GetOutgoingDocumentTypes(
+            [FromQuery] string? searchQuery,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var outgoingDocumentTypes = await _context.OutgoingDocumentTypes.ToListAsync();
-            return Ok(_mapper.Map<IEnumerable<OutgoingDocumentTypeDto>>(outgoingDocumentTypes));
+            var query = _context.OutgoingDocumentTypes.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                query = query.Where(t => t.OutgoingDocumentTypeName.Contains(searchQuery));
+            }
+
+            var totalCount = await query.CountAsync();
+            var items = await query.OrderBy(t => t.OutgoingDocumentTypeName)
+                                   .Skip((pageNumber - 1) * pageSize)
+                                   .Take(pageSize)
+                                   .AsNoTracking()
+                                   .ToListAsync();
+
+            var dtos = _mapper.Map<List<OutgoingDocumentTypeDto>>(items);
+            return Ok(new PagedResult<OutgoingDocumentTypeDto>(dtos, totalCount, pageNumber, pageSize));
         }
-        // GET: api/OutgoingDocumentTypes/id
+
         [HttpGet("{id}")]
         public async Task<ActionResult<OutgoingDocumentTypeDto>> GetOutgoingDocumentType(int id)
         {
-            var outgoingDocumentType = await _context.OutgoingDocumentTypes.FindAsync(id);
-            if (outgoingDocumentType == null)
-            {
-                return NotFound();
-            }
-            return Ok(_mapper.Map<OutgoingDocumentTypeDto>(outgoingDocumentType));
+            var docType = await _context.OutgoingDocumentTypes.FindAsync(id);
+            if (docType == null) return NotFound();
+            return Ok(_mapper.Map<OutgoingDocumentTypeDto>(docType));
         }
-        // GET: api/OutgoingDocumentTypes/search?query=searchTerm
-        [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<OutgoingDocumentTypeDto>>> SearchOutgoingDocumentTypes([FromQuery] string query)
-        {
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                return BadRequest("Cần cung cấp từ khóa tìm kiếm.");
-            }
-            var outgoingDocumentTypes = await _context.OutgoingDocumentTypes
-                .Where(d => d.OutgoingDocumentTypeName.Contains(query))
-                .AsNoTracking()
-                .ToListAsync();
-            return Ok(_mapper.Map<IEnumerable<OutgoingDocumentTypeDto>>(outgoingDocumentTypes));
-        }
-        // POST: api/OutgoingDocumentTypes
+
         [HttpPost]
         public async Task<ActionResult<OutgoingDocumentTypeDto>> PostOutgoingDocumentType(OutgoingDocumentTypeForCreationDto creationDto)
         {
-            var outgoingDocumentType = _mapper.Map<OutgoingDocumentType>(creationDto);
-            _context.OutgoingDocumentTypes.Add(outgoingDocumentType);
+            var docType = _mapper.Map<OutgoingDocumentType>(creationDto);
+            _context.OutgoingDocumentTypes.Add(docType);
             await _context.SaveChangesAsync();
-            var outgoingDocumentTypeDto = _mapper.Map<OutgoingDocumentTypeDto>(outgoingDocumentType);
-            return CreatedAtAction(nameof(GetOutgoingDocumentType), new { id = outgoingDocumentTypeDto.ID }, outgoingDocumentTypeDto);
+            var dto = _mapper.Map<OutgoingDocumentTypeDto>(docType);
+            return CreatedAtAction(nameof(GetOutgoingDocumentType), new { id = dto.ID }, dto);
         }
-        // PUT: api/OutgoingDocumentTypes/id
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOutgoingDocumentType(int id, OutgoingDocumentTypeForUpdateDto updateDto)
         {
-            var outgoingDocumentTypeFromDb = await _context.OutgoingDocumentTypes.FindAsync(id);
-            if (outgoingDocumentTypeFromDb == null)
-            {
-                return NotFound();
-            }
-            _mapper.Map(updateDto, outgoingDocumentTypeFromDb);
+            var docTypeFromDb = await _context.OutgoingDocumentTypes.FindAsync(id);
+            if (docTypeFromDb == null) return NotFound();
+            _mapper.Map(updateDto, docTypeFromDb);
             await _context.SaveChangesAsync();
             return NoContent();
         }
-        // DELETE: api/OutgoingDocumentTypes/id
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOutgoingDocumentType(int id)
         {
-            var outgoingDocumentType = await _context.OutgoingDocumentTypes.FindAsync(id);
-            if (outgoingDocumentType == null)
-            {
-                return NotFound();
-            }
-            _context.OutgoingDocumentTypes.Remove(outgoingDocumentType);
+            var docType = await _context.OutgoingDocumentTypes.FindAsync(id);
+            if (docType == null) return NotFound();
+            _context.OutgoingDocumentTypes.Remove(docType);
             await _context.SaveChangesAsync();
             return NoContent();
         }

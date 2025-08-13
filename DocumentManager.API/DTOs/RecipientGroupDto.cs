@@ -1,18 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// File: API/DTOs/RecipientGroupDto.cs
+using System.ComponentModel.DataAnnotations;
 
 namespace DocumentManager.API.DTOs
 {
     public class RecipientGroupDto
     {
-        public int Id { get; set; }
-        public string GroupNRecipientGroupNameame { get; set; }
+        public int ID { get; set; }
+        // Sửa lại tên thuộc tính
+        public string RecipientGroupName { get; set; } = string.Empty;
     }
+
     // Dùng để tạo mới (Create)
     public class RecipientGroupForCreationDto
     {
         [Required(ErrorMessage = "Tên nhóm là bắt buộc.")]
         [StringLength(250)]
-        public string RecipientGroupName { get; set; }
+        public string RecipientGroupName { get; set; } = string.Empty;
     }
 
     // Dùng để cập nhật (Update)
@@ -20,6 +23,6 @@ namespace DocumentManager.API.DTOs
     {
         [Required(ErrorMessage = "Tên nhóm là bắt buộc.")]
         [StringLength(250)]
-        public string RecipientGroupName { get; set; }
+        public string RecipientGroupName { get; set; } = string.Empty;
     }
 }

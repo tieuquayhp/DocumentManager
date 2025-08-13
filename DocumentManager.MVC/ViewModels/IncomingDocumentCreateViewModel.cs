@@ -9,28 +9,10 @@ namespace DocumentManager.MVC.ViewModels
 
         [Display(Name = "Số Tài Liệu Đến")]
         [Required]
-        public string IncomingDocumentNumber { get; set; }
+        public string IncomingDocumentNumber { get; set; } = string.Empty;
 
-        [Display(Name = "Ngày Phát Hành")]
-        [Required]
-        [DataType(DataType.Date)]
-        public DateTime ReleaseDate { get; set; }
+        // ... (các thuộc tính khác giữ nguyên)
 
-        [Display(Name = "Mã Tài Liệu (Bên Gửi)")]
-        public string DocumentCodeFromIssuer { get; set; }
-
-        [Display(Name = "Ngày Phát Hành (Bên Gửi)")]
-        [DataType(DataType.Date)]
-        public DateTime ReleaseDateFromIssuer { get; set; }
-
-        [Display(Name = "Nội dung")]
-        [Required]
-        public string DocumentContent { get; set; }
-
-        [Display(Name = "Tệp đính kèm")]
-        public string DocumentFile { get; set; }
-
-        // --- Foreign Keys ---
         [Display(Name = "Đơn Vị Phát Hành")]
         [Required]
         public int IssuingUnitID { get; set; }
@@ -39,13 +21,16 @@ namespace DocumentManager.MVC.ViewModels
         [Required]
         public int RelatedProjectID { get; set; }
 
-        [Display(Name = "Nhóm Nhận")]
-        [Required]
-        public int RecipientGroupID { get; set; }
+        // --- SỬA ĐỔI QUAN TRỌNG ---
+        // Thay thế RecipientGroupID bằng một danh sách các ID được chọn
+        [Display(Name = "Các Nhóm Nhận")]
+        [Required(ErrorMessage = "Vui lòng chọn ít nhất một nhóm nhận.")]
+        public List<int> SelectedRecipientGroupIDs { get; set; } = new List<int>();
 
-        // --- Lists for Dropdowns ---
+        // --- Lists for Dropdowns / Multi-select ---
         public IEnumerable<SelectListItem>? IssuingUnits { get; set; }
         public IEnumerable<SelectListItem>? RelatedProjects { get; set; }
-        public IEnumerable<SelectListItem>? RecipientGroups { get; set; }
+        // Đổi tên để rõ ràng hơn, dùng cho multi-select box
+        public IEnumerable<SelectListItem>? AllRecipientGroups { get; set; }
     }
 }

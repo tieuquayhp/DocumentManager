@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace DocumentManager.DAL.Models
 {
-    public class RecipientGroupEmployee
+    public class IncomingDocumentRecipientGroup
     {
-        public int EmployeeID { get; set; }
-        public virtual Employee Employee { get; set; }
+        public int IncomingDocumentID { get; set; }
+        public virtual IncomingDocument IncomingDocument { get; set; }
 
         public int RecipientGroupID { get; set; }
         public virtual RecipientGroup RecipientGroup { get; set; }

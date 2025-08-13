@@ -22,6 +22,7 @@ namespace DocumentManager.MVC.ViewModels
         [Display(Name = "Dự Án Liên Quan")]
         public string ProjectName { get; set; }
         [Display(Name = "Nhóm Nhận")]
-        public string GroupName { get; set; }
+        // Bỏ GroupName
+        public List<string> RecipientGroupNames { get; set; } = new List<string>();
     }
 }

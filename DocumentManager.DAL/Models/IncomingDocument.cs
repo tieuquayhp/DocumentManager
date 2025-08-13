@@ -23,9 +23,11 @@ namespace DocumentManager.DAL.Models
         public int RelatedProjectID { get; set; }
         [ForeignKey("RelatedProjectID")]
         public RelatedProject RelatedProject { get; set; } = null!;
-        public int RecipientGroupID { get; set; }
-        [ForeignKey("RecipientGroupID")]
-        public RecipientGroup RecipientGroup { get; set; } = null!;
+        //public int RecipientGroupID { get; set; }
+        //[ForeignKey("RecipientGroupID")]
+        //public RecipientGroup RecipientGroup { get; set; } = null!;
+        // Thêm navigation property cho mối quan hệ nhiều-nhiều
+        public virtual ICollection<IncomingDocumentRecipientGroup> IncomingDocumentRecipientGroups { get; set; }
 
     }
 }

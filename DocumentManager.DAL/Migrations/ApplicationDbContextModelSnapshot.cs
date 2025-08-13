@@ -22,48 +22,30 @@ namespace DocumentManager.DAL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DocumentManager.DAL.Models.Department", b =>
+            modelBuilder.Entity("DocumentManager.DAL.Models.Employee", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("DepartmentName")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Departments");
-                });
-
-            modelBuilder.Entity("DocumentManager.DAL.Models.Employee", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DepartmentID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<string>("EmployeeName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("DepartmentID");
+                    b.HasKey("ID");
 
                     b.ToTable("Employees");
                 });
@@ -91,9 +73,6 @@ namespace DocumentManager.DAL.Migrations
                     b.Property<int>("IssuingUnitID")
                         .HasColumnType("int");
 
-                    b.Property<int>("RecipientGroupID")
-                        .HasColumnType("int");
-
                     b.Property<int>("RelatedProjectID")
                         .HasColumnType("int");
 
@@ -107,11 +86,24 @@ namespace DocumentManager.DAL.Migrations
 
                     b.HasIndex("IssuingUnitID");
 
-                    b.HasIndex("RecipientGroupID");
-
                     b.HasIndex("RelatedProjectID");
 
                     b.ToTable("IncomingDocuments");
+                });
+
+            modelBuilder.Entity("DocumentManager.DAL.Models.IncomingDocumentRecipientGroup", b =>
+                {
+                    b.Property<int>("IncomingDocumentID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecipientGroupID")
+                        .HasColumnType("int");
+
+                    b.HasKey("IncomingDocumentID", "RecipientGroupID");
+
+                    b.HasIndex("RecipientGroupID");
+
+                    b.ToTable("IncomingDocumentRecipientGroups");
                 });
 
             modelBuilder.Entity("DocumentManager.DAL.Models.IssuingUnit", b =>
@@ -158,9 +150,6 @@ namespace DocumentManager.DAL.Migrations
                     b.Property<int>("OutgoingDocumentTypeID")
                         .HasColumnType("int");
 
-                    b.Property<int>("RecipientGroupID")
-                        .HasColumnType("int");
-
                     b.Property<int>("RelatedProjectID")
                         .HasColumnType("int");
 
@@ -174,8 +163,6 @@ namespace DocumentManager.DAL.Migrations
                     b.HasIndex("OutgoingDocumentFormatID");
 
                     b.HasIndex("OutgoingDocumentTypeID");
-
-                    b.HasIndex("RecipientGroupID");
 
                     b.HasIndex("RelatedProjectID");
 
@@ -203,6 +190,21 @@ namespace DocumentManager.DAL.Migrations
                     b.HasIndex("OutgoingDocumentTypeId");
 
                     b.ToTable("OutgoingDocumentFormats");
+                });
+
+            modelBuilder.Entity("DocumentManager.DAL.Models.OutgoingDocumentRecipientGroup", b =>
+                {
+                    b.Property<int>("OutgoingDocumentID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecipientGroupID")
+                        .HasColumnType("int");
+
+                    b.HasKey("OutgoingDocumentID", "RecipientGroupID");
+
+                    b.HasIndex("RecipientGroupID");
+
+                    b.ToTable("OutgoingDocumentRecipientGroups");
                 });
 
             modelBuilder.Entity("DocumentManager.DAL.Models.OutgoingDocumentType", b =>
@@ -274,28 +276,11 @@ namespace DocumentManager.DAL.Migrations
                     b.ToTable("RelatedProjects");
                 });
 
-            modelBuilder.Entity("DocumentManager.DAL.Models.Employee", b =>
-                {
-                    b.HasOne("DocumentManager.DAL.Models.Department", "Department")
-                        .WithMany("Employees")
-                        .HasForeignKey("DepartmentID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Department");
-                });
-
             modelBuilder.Entity("DocumentManager.DAL.Models.IncomingDocument", b =>
                 {
                     b.HasOne("DocumentManager.DAL.Models.IssuingUnit", "IssuingUnit")
                         .WithMany("IncomingDocuments")
                         .HasForeignKey("IssuingUnitID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DocumentManager.DAL.Models.RecipientGroup", "RecipientGroup")
-                        .WithMany("IncomingDocuments")
-                        .HasForeignKey("RecipientGroupID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -307,9 +292,26 @@ namespace DocumentManager.DAL.Migrations
 
                     b.Navigation("IssuingUnit");
 
-                    b.Navigation("RecipientGroup");
-
                     b.Navigation("RelatedProject");
+                });
+
+            modelBuilder.Entity("DocumentManager.DAL.Models.IncomingDocumentRecipientGroup", b =>
+                {
+                    b.HasOne("DocumentManager.DAL.Models.IncomingDocument", "IncomingDocument")
+                        .WithMany("IncomingDocumentRecipientGroups")
+                        .HasForeignKey("IncomingDocumentID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DocumentManager.DAL.Models.RecipientGroup", "RecipientGroup")
+                        .WithMany("IncomingDocumentRecipientGroups")
+                        .HasForeignKey("RecipientGroupID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("IncomingDocument");
+
+                    b.Navigation("RecipientGroup");
                 });
 
             modelBuilder.Entity("DocumentManager.DAL.Models.OutgoingDocument", b =>
@@ -332,12 +334,6 @@ namespace DocumentManager.DAL.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DocumentManager.DAL.Models.RecipientGroup", "RecipientGroup")
-                        .WithMany("OutgoingDocuments")
-                        .HasForeignKey("RecipientGroupID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DocumentManager.DAL.Models.RelatedProject", "RelatedProject")
                         .WithMany("OutgoingDocuments")
                         .HasForeignKey("RelatedProjectID")
@@ -349,8 +345,6 @@ namespace DocumentManager.DAL.Migrations
                     b.Navigation("OutgoingDocumentFormat");
 
                     b.Navigation("OutgoingDocumentType");
-
-                    b.Navigation("RecipientGroup");
 
                     b.Navigation("RelatedProject");
                 });
@@ -366,18 +360,37 @@ namespace DocumentManager.DAL.Migrations
                     b.Navigation("OutgoingDocumentType");
                 });
 
+            modelBuilder.Entity("DocumentManager.DAL.Models.OutgoingDocumentRecipientGroup", b =>
+                {
+                    b.HasOne("DocumentManager.DAL.Models.OutgoingDocument", "OutgoingDocument")
+                        .WithMany("OutgoingDocumentRecipientGroups")
+                        .HasForeignKey("OutgoingDocumentID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DocumentManager.DAL.Models.RecipientGroup", "RecipientGroup")
+                        .WithMany("OutgoingDocumentRecipientGroups")
+                        .HasForeignKey("RecipientGroupID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("OutgoingDocument");
+
+                    b.Navigation("RecipientGroup");
+                });
+
             modelBuilder.Entity("DocumentManager.DAL.Models.RecipientGroupEmployee", b =>
                 {
                     b.HasOne("DocumentManager.DAL.Models.Employee", "Employee")
                         .WithMany("RecipientGroupEmployees")
                         .HasForeignKey("EmployeeID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("DocumentManager.DAL.Models.RecipientGroup", "RecipientGroup")
                         .WithMany("RecipientGroupEmployees")
                         .HasForeignKey("RecipientGroupID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Employee");
@@ -385,14 +398,14 @@ namespace DocumentManager.DAL.Migrations
                     b.Navigation("RecipientGroup");
                 });
 
-            modelBuilder.Entity("DocumentManager.DAL.Models.Department", b =>
-                {
-                    b.Navigation("Employees");
-                });
-
             modelBuilder.Entity("DocumentManager.DAL.Models.Employee", b =>
                 {
                     b.Navigation("RecipientGroupEmployees");
+                });
+
+            modelBuilder.Entity("DocumentManager.DAL.Models.IncomingDocument", b =>
+                {
+                    b.Navigation("IncomingDocumentRecipientGroups");
                 });
 
             modelBuilder.Entity("DocumentManager.DAL.Models.IssuingUnit", b =>
@@ -400,6 +413,11 @@ namespace DocumentManager.DAL.Migrations
                     b.Navigation("IncomingDocuments");
 
                     b.Navigation("OutgoingDocuments");
+                });
+
+            modelBuilder.Entity("DocumentManager.DAL.Models.OutgoingDocument", b =>
+                {
+                    b.Navigation("OutgoingDocumentRecipientGroups");
                 });
 
             modelBuilder.Entity("DocumentManager.DAL.Models.OutgoingDocumentFormat", b =>
@@ -416,9 +434,9 @@ namespace DocumentManager.DAL.Migrations
 
             modelBuilder.Entity("DocumentManager.DAL.Models.RecipientGroup", b =>
                 {
-                    b.Navigation("IncomingDocuments");
+                    b.Navigation("IncomingDocumentRecipientGroups");
 
-                    b.Navigation("OutgoingDocuments");
+                    b.Navigation("OutgoingDocumentRecipientGroups");
 
                     b.Navigation("RecipientGroupEmployees");
                 });

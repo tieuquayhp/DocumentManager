@@ -21,14 +21,16 @@ namespace DocumentManager.DAL.Models
         public int RelatedProjectID { get; set; }
         [ForeignKey("RelatedProjectID")]
         public RelatedProject RelatedProject { get; set; } = null!;
-        public int RecipientGroupID { get; set; }
-        [ForeignKey("RecipientGroupID")]
-        public RecipientGroup RecipientGroup { get; set; } = null!;
+        //public int RecipientGroupID { get; set; }
+        //[ForeignKey("RecipientGroupID")]
+        //public RecipientGroup RecipientGroup { get; set; } = null!;
         public int OutgoingDocumentFormatID { get; set; }
         [ForeignKey("OutgoingDocumentFormatID")]
         public OutgoingDocumentFormat OutgoingDocumentFormat { get; set; } = null!;
         public int OutgoingDocumentTypeID { get; set; }
         [ForeignKey("OutgoingDocumentTypeID")]
         public OutgoingDocumentType OutgoingDocumentType { get; set; } = null!;
+        // Thêm navigation property cho mối quan hệ nhiều-nhiều
+        public virtual ICollection<OutgoingDocumentRecipientGroup> OutgoingDocumentRecipientGroups { get; set; }
     }
 }

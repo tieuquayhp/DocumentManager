@@ -1,44 +1,47 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// File: API/DTOs/EmployeeDto.cs
+using System.ComponentModel.DataAnnotations;
 
 namespace DocumentManager.API.DTOs
 {
+    // Lớp DTO để hiển thị dữ liệu Employee
     public class EmployeeDto
     {
         public int ID { get; set; }
-        public string EmployeeName { get; set; }
-        public string Email { get; set; }
-        public int DepartmentID { get; set; }
-        public string DepartmentName { get; set; } // Thêm tên phòng ban để tiện hiển thị
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string DepartmentName { get; set; } = string.Empty; // Thuộc tính này vẫn đúng
     }
-    // Dùng để tạo mới (Create)
+
+    // Lớp DTO để tạo mới Employee
     public class EmployeeForCreationDto
     {
         [Required(ErrorMessage = "Tên nhân viên là bắt buộc.")]
         [StringLength(250)]
-        public string EmployeeName { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Email là bắt buộc.")]
         [StringLength(250)]
         [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "ID phòng ban là bắt buộc.")]
-        public int DepartmentID { get; set; }
+        // Thêm trường DepartmentName, bỏ DepartmentID
+        [StringLength(250)]
+        public string DepartmentName { get; set; } = string.Empty;
     }
 
-    // Dùng để cập nhật (Update)
+    // Lớp DTO để cập nhật Employee
     public class EmployeeForUpdateDto
     {
         [Required(ErrorMessage = "Tên nhân viên là bắt buộc.")]
         [StringLength(250)]
-        public string EmployeeName { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Email là bắt buộc.")]
         [StringLength(250)]
         [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "ID phòng ban là bắt buộc.")]
-        public int DepartmentID { get; set; }
+        [StringLength(250)]
+        public string DepartmentName { get; set; } = string.Empty;
     }
 }

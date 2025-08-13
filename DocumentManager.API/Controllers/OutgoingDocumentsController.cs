@@ -1,10 +1,11 @@
-﻿using AutoMapper;
+﻿// File: API/Controllers/OutgoingDocumentsController.cs
+using AutoMapper;
 using DocumentManager.API.DTOs;
+using DocumentManager.API.Helpers;
 using DocumentManager.DAL.Data;
 using DocumentManager.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Net.Quic;
 
 namespace DocumentManager.API.Controllers
 {
@@ -21,11 +22,6 @@ namespace DocumentManager.API.Controllers
             _mapper = mapper;
         }
 
-        /// <summary>
-        /// Phương thức trợ giúp private để tránh lặp lại mã nguồn.
-        /// Nó tạo một câu truy vấn IQueryable đã bao gồm tất cả các bảng liên quan
-        /// cần thiết để ánh xạ sang OutgoingDocumentDto một cách hoàn chỉnh.
-        /// </summary>
         private IQueryable<OutgoingDocument> GetFullDocumentsQuery()
         {
             return _context.OutgoingDocuments
@@ -33,137 +29,93 @@ namespace DocumentManager.API.Controllers
                 .Include(d => d.OutgoingDocumentFormat)
                 .Include(d => d.IssuingUnit)
                 .Include(d => d.RelatedProject)
-                .Include(d => d.RecipientGroup)
-                .AsNoTracking(); // Sử dụng AsNoTracking() để tăng hiệu suất cho các truy vấn chỉ đọc.
+                .AsNoTracking();
         }
 
-        // GET: api/outgoingdocuments
-        // GET: api/outgoingdocuments?limit=5
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OutgoingDocumentDto>>> GetOutgoingDocuments([FromQuery] int? limit)
+        public async Task<ActionResult<PagedResult<OutgoingDocumentDto>>> GetOutgoingDocuments(
+            [FromQuery] string? searchQuery,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int? limit = null)
         {
-            var query =  GetFullDocumentsQuery().OrderByDescending(d => d.ReleaseDate); // Sắp xếp theo ngày phát hành mới nhất
-            if(limit.HasValue && limit > 0)
+            var query = GetFullDocumentsQuery();
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                var limitedDocuments = await query.Take(limit.Value).ToListAsync();
-                return Ok(_mapper.Map<IEnumerable<OutgoingDocumentDto>>(limitedDocuments));
+                query = query.Where(d => d.OutgoingDocumentNumber.ToString().Contains(searchQuery) || d.DocumentContent.Contains(searchQuery));
             }
-            var documents = await query.ToListAsync();
-            return Ok(_mapper.Map<IEnumerable<OutgoingDocumentDto>>(documents));
+
+            query = query.OrderByDescending(d => d.ReleaseDate);
+
+            if (limit.HasValue && limit > 0)
+            {
+                var limitedItems = await query.Take(limit.Value).ToListAsync();
+                return Ok(_mapper.Map<List<OutgoingDocumentDto>>(limitedItems));
+            }
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            var dtos = _mapper.Map<List<OutgoingDocumentDto>>(items);
+            return Ok(new PagedResult<OutgoingDocumentDto>(dtos, totalCount, pageNumber, pageSize));
         }
 
-        // GET: api/outgoingdocuments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<OutgoingDocumentDto>> GetOutgoingDocument(int id)
         {
             var document = await GetFullDocumentsQuery().FirstOrDefaultAsync(d => d.Id == id);
-
-            if (document == null)
-            {
-                return NotFound($"Không tìm thấy tài liệu đi với ID {id}.");
-            }
-
-            var documentDto = _mapper.Map<OutgoingDocumentDto>(document);
-            return Ok(documentDto);
+            if (document == null) return NotFound();
+            return Ok(_mapper.Map<OutgoingDocumentDto>(document));
         }
 
-        // GET: api/outgoingdocuments/search?query=...
-        [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<OutgoingDocumentDto>>> SearchOutgoingDocuments([FromQuery] string query)
-        {
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                return BadRequest("Cần cung cấp từ khóa tìm kiếm.");
-            }
-
-            var documents = await GetFullDocumentsQuery()
-                .Where(d =>
-                    d.OutgoingDocumentNumber.ToString().Contains(query) ||
-                    d.DocumentContent.Contains(query) ||
-                    d.RelatedProject.RelatedProjectName.Contains(query) // Tìm kiếm cả theo tên dự án liên quan
-                )
-                .ToListAsync();
-
-            var documentDtos = _mapper.Map<IEnumerable<OutgoingDocumentDto>>(documents);
-            return Ok(documentDtos);
-        }
-
-        // POST: api/outgoingdocuments
         [HttpPost]
         public async Task<ActionResult<OutgoingDocumentDto>> PostOutgoingDocument(OutgoingDocumentForCreationDto creationDto)
         {
-            // --- Validation quan trọng cho các khóa ngoại ---
-            if (!await _context.OutgoingDocumentTypes.AnyAsync(t => t.Id == creationDto.OutgoingDocumentTypeID) ||
-                !await _context.OutgoingDocumentFormats.AnyAsync(f => f.Id == creationDto.OutgoingDocumentFormatID) ||
-                !await _context.IssuingUnits.AnyAsync(i => i.Id == creationDto.IssuingUnitID) ||
-                !await _context.RelatedProjects.AnyAsync(p => p.Id == creationDto.RelatedProjectID) ||
-                !await _context.RecipientGroups.AnyAsync(g => g.Id == creationDto.RecipientGroupID))
+            foreach (var groupId in creationDto.RecipientGroupIDs)
             {
-                return BadRequest("Một hoặc nhiều ID liên quan không hợp lệ.");
+                if (!await _context.RecipientGroups.AnyAsync(g => g.Id == groupId))
+                    return BadRequest($"RecipientGroup với ID {groupId} không tồn tại.");
             }
 
             var document = _mapper.Map<OutgoingDocument>(creationDto);
+            foreach (var groupId in creationDto.RecipientGroupIDs)
+            {
+                document.OutgoingDocumentRecipientGroups.Add(new OutgoingDocumentRecipientGroup { RecipientGroupID = groupId });
+            }
 
             _context.OutgoingDocuments.Add(document);
             await _context.SaveChangesAsync();
-
-            // Lấy lại đối tượng vừa tạo bao gồm các bảng liên quan để trả về DTO hoàn chỉnh
-            var createdDocument = await _context.OutgoingDocuments
-                .Include(d => d.OutgoingDocumentType)
-                .Include(d => d.OutgoingDocumentFormat)
-                .Include(d => d.IssuingUnit)
-                .Include(d => d.RelatedProject)
-                .Include(d => d.RecipientGroup)
-                .FirstOrDefaultAsync(d => d.Id == document.Id);
-
-            var documentDto = _mapper.Map<OutgoingDocumentDto>(createdDocument);
-
-            return CreatedAtAction(nameof(GetOutgoingDocument), new { id = documentDto.ID }, documentDto);
+            var dto = _mapper.Map<OutgoingDocumentDto>(document);
+            return CreatedAtAction(nameof(GetOutgoingDocument), new { id = dto.ID }, dto);
         }
 
-        // PUT: api/outgoingdocuments/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOutgoingDocument(int id, OutgoingDocumentForUpdateDto updateDto)
         {
-            // Lấy đối tượng cần cập nhật từ DB (đang được theo dõi bởi DbContext)
-            var documentFromDb = await _context.OutgoingDocuments.FindAsync(id);
-            if (documentFromDb == null)
-            {
-                return NotFound($"Không tìm thấy tài liệu đi với ID {id} để cập nhật.");
-            }
+            var documentFromDb = await _context.OutgoingDocuments
+                .Include(d => d.OutgoingDocumentRecipientGroups)
+                .FirstOrDefaultAsync(d => d.Id == id);
+            if (documentFromDb == null) return NotFound();
 
-            // (Tùy chọn) Validation khóa ngoại tương tự như POST để đảm bảo dữ liệu mới hợp lệ
-            if (!await _context.OutgoingDocumentTypes.AnyAsync(t => t.Id == updateDto.OutgoingDocumentTypeID) ||
-                !await _context.OutgoingDocumentFormats.AnyAsync(f => f.Id == updateDto.OutgoingDocumentFormatID) ||
-                !await _context.IssuingUnits.AnyAsync(i => i.Id == updateDto.IssuingUnitID) ||
-                !await _context.RelatedProjects.AnyAsync(p => p.Id == updateDto.RelatedProjectID) ||
-                !await _context.RecipientGroups.AnyAsync(g => g.Id == updateDto.RecipientGroupID))
-            {
-                return BadRequest("Một hoặc nhiều ID liên quan không hợp lệ.");
-            }
-
-            // AutoMapper sẽ cập nhật các thuộc tính của 'documentFromDb' từ 'updateDto'
             _mapper.Map(updateDto, documentFromDb);
 
-            await _context.SaveChangesAsync();
+            documentFromDb.OutgoingDocumentRecipientGroups.Clear();
+            foreach (var groupId in updateDto.RecipientGroupIDs)
+            {
+                documentFromDb.OutgoingDocumentRecipientGroups.Add(new OutgoingDocumentRecipientGroup { RecipientGroupID = groupId });
+            }
 
-            // Trả về 204 No Content là chuẩn cho một yêu cầu PUT thành công
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
-        // DELETE: api/outgoingdocuments/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOutgoingDocument(int id)
         {
             var document = await _context.OutgoingDocuments.FindAsync(id);
-            if (document == null)
-            {
-                return NotFound($"Không tìm thấy tài liệu đi với ID {id} để xóa.");
-            }
-
+            if (document == null) return NotFound();
             _context.OutgoingDocuments.Remove(document);
             await _context.SaveChangesAsync();
-
             return NoContent();
         }
     }
