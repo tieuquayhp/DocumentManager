@@ -13,6 +13,13 @@
     </div>
     @* ... (Tất cả các trường input khác như ReleaseDate, IssuingUnitID, v.v...) ... *@
     <div class="col-md-4">
+        <label asp-for="IssuingUnitID" class="form-label"></label>
+        <select asp-for="IssuingUnitID" class="form-select" asp-items="@Model.IssuingUnits">
+            <option value="">-- Chọn đơn vị phát hành --</option>
+        </select>
+        <span asp-validation-for="RelatedProjectID" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
         <label asp-for="RelatedProjectID" class="form-label"></label>
         <select asp-for="RelatedProjectID" class="form-select" asp-items="@Model.RelatedProjects">
             <option value="">-- Chọn dự án --</option>

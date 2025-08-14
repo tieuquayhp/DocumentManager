@@ -49,8 +49,23 @@ namespace DocumentManager.API.DTOs
     }
 
     // DTO để cập nhật (không cần định nghĩa lại các thuộc tính)
-    public class IncomingDocumentForUpdateDto : IncomingDocumentForCreationDto
+    public class IncomingDocumentForUpdateDto
     {
-        // Kế thừa tất cả thuộc tính từ lớp cha là đủ
+        [Required]
+        public string IncomingDocumentNumber { get; set; } = string.Empty;
+        [Required]
+        public DateTime ReleaseDate { get; set; }
+        public string? DocumentCodeFromIssuer { get; set; }
+        public DateTime? ReleaseDateFromIssuer { get; set; }
+        [Required]
+        public string DocumentContent { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "IssuingUnitID là bắt buộc.")]
+        [Range(1, int.MaxValue, ErrorMessage = "IssuingUnitID không hợp lệ.")]
+        public int IssuingUnitID { get; set; }
+
+        [Required(ErrorMessage = "RelatedProjectID là bắt buộc.")]
+        [Range(1, int.MaxValue, ErrorMessage = "RelatedProjectID không hợp lệ.")]
+        public int RelatedProjectID { get; set; }
     }
 }

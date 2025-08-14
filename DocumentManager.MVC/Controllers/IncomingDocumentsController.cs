@@ -255,43 +255,41 @@ namespace DocumentManager.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, IncomingDocumentCreateViewModel viewModel, IFormFile? documentFile)
         {
-            if (id != viewModel.ID)
-            {
-                return BadRequest();
-            }
+            if (id != viewModel.ID) return BadRequest();
 
-            // Xóa validation cho các thuộc tính không được bind từ form
             ModelState.Remove("IssuingUnits");
             ModelState.Remove("RelatedProjects");
             ModelState.Remove("AllRecipientGroups");
-            // Khi chỉnh sửa, file không còn bắt buộc nữa. Chúng ta sẽ không validate nó ở đây.
-            // Logic của API sẽ tự xử lý việc giữ lại file cũ nếu không có file mới.
             ModelState.Remove("documentFile");
-
 
             if (ModelState.IsValid)
             {
                 using (var content = new MultipartFormDataContent())
                 {
-                    // --- Đóng gói dữ liệu form ---
-                    content.Add(new StringContent(viewModel.IncomingDocumentNumber), nameof(IncomingDocumentForUpdateDto.IncomingDocumentNumber));
-                    // ... (Thêm các trường khác tương tự như action Create)
-                    content.Add(new StringContent(viewModel.DocumentContent), nameof(IncomingDocumentForUpdateDto.DocumentContent));
-                    content.Add(new StringContent(viewModel.IssuingUnitID.ToString()), nameof(IncomingDocumentForUpdateDto.IssuingUnitID));
-                    content.Add(new StringContent(viewModel.RelatedProjectID.ToString()), nameof(IncomingDocumentForUpdateDto.RelatedProjectID));
+                    // --- ĐÓNG GÓI TOÀN BỘ DỮ LIỆU FORM ---
+                    content.Add(new StringContent(viewModel.IncomingDocumentNumber), nameof(viewModel.IncomingDocumentNumber));
+                    content.Add(new StringContent(viewModel.ReleaseDate.ToString("o")), nameof(viewModel.ReleaseDate));
+                    content.Add(new StringContent(viewModel.DocumentCodeFromIssuer ?? ""), nameof(viewModel.DocumentCodeFromIssuer));
+                    if (viewModel.ReleaseDateFromIssuer.HasValue)
+                        content.Add(new StringContent(viewModel.ReleaseDateFromIssuer.Value.ToString("o")), nameof(viewModel.ReleaseDateFromIssuer));
+                    content.Add(new StringContent(viewModel.DocumentContent), nameof(viewModel.DocumentContent));
 
+                    // --- THÊM CÁC TRƯỜNG BỊ THIẾU ---
+                    content.Add(new StringContent(viewModel.IssuingUnitID.ToString()), nameof(viewModel.IssuingUnitID));
+                    content.Add(new StringContent(viewModel.RelatedProjectID.ToString()), nameof(viewModel.RelatedProjectID));
+
+                    // Thêm danh sách các ID của nhóm nhận
                     foreach (var groupId in viewModel.SelectedRecipientGroupIDs)
                     {
                         content.Add(new StringContent(groupId.ToString()), "recipientGroupIDs");
                     }
 
-                    // --- Đóng gói file (nếu có) ---
+                    // Đóng gói file (nếu có)
                     if (documentFile != null && documentFile.Length > 0)
                     {
                         content.Add(new StreamContent(documentFile.OpenReadStream()), "file", documentFile.FileName);
                     }
 
-                    // --- Gửi yêu cầu PUT đến API ---
                     var response = await _client.PutAsync($"api/incomingdocuments/{id}", content);
 
                     if (response.IsSuccessStatusCode)
@@ -309,6 +307,40 @@ namespace DocumentManager.MVC.Controllers
             // Nếu model không hợp lệ, load lại dropdowns và hiển thị lại form
             await PopulateDropdowns(viewModel);
             return View(viewModel);
+        }
+        // GET: /IncomingDocuments/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var response = await _client.GetAsync($"api/incomingdocuments/{id}");
+            if (!response.IsSuccessStatusCode) return NotFound();
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            var viewModel = JsonConvert.DeserializeObject<IncomingDocumentViewModel>(jsonString);
+
+            if (viewModel == null) return NotFound();
+
+            return View(viewModel);
+        }
+
+        // POST: /IncomingDocuments/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var response = await _client.DeleteAsync($"api/incomingdocuments/{id}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Xử lý trường hợp API trả về lỗi (ví dụ: không thể xóa do ràng buộc)
+                // Bạn có thể đọc lỗi và hiển thị cho người dùng bằng TempData
+                // TempData["ErrorMessage"] = "Không thể xóa tài liệu. Vui lòng thử lại.";
+                // return RedirectToAction(nameof(Index));
+            }
+
+            // TempData["SuccessMessage"] = "Đã xóa tài liệu thành công.";
+            return RedirectToAction(nameof(Index));
         }
     }
 }

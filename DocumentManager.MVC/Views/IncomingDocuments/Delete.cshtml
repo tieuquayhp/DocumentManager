@@ -1,0 +1,50 @@
+﻿@model DocumentManager.MVC.ViewModels.IncomingDocumentViewModel
+
+@{
+    ViewData["Title"] = "Xác nhận Xóa Tài liệu đến";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3 class="text-danger">Bạn có chắc chắn muốn xóa tài liệu này không?</h3>
+<p class="text-muted">Hành động này sẽ xóa vĩnh viễn tài liệu và tệp đính kèm (nếu có).</p>
+
+<div>
+    <h4>Thông tin tài liệu</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.IncomingDocumentNumber)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.IncomingDocumentNumber)
+        </dd>
+
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.DocumentContent)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.DocumentContent)
+        </dd>
+
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.ReleaseDate)
+        </dt>
+        <dd class="col-sm-9">
+            @Model.ReleaseDate.ToString("dd/MM/yyyy")
+        </dd>
+
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.IssuingUnitName)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.IssuingUnitName)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ID" />
+        <input type="submit" value="Xác nhận Xóa" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-secondary">Hủy bỏ</a>
+    </form>
+</div>
