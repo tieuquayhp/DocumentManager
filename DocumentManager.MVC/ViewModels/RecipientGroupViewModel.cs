@@ -7,7 +7,7 @@ namespace DocumentManager.MVC.ViewModels
         public int ID { get; set; }
         [Display(Name = "Nhóm Nhận")]
         [Required]
-        public string GroupName { get; set; }
+        public string RecipientGroupName { get; set; }
 
     }
 }

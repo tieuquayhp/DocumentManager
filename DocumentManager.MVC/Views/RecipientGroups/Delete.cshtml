@@ -1,0 +1,23 @@
+﻿@model DocumentManager.MVC.ViewModels.RecipientGroupViewModel
+
+@{
+    ViewData["Title"] = "Xóa Nhóm người nhận";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3 class="text-danger">Bạn có chắc chắn muốn xóa nhóm người nhận này không?</h3>
+<div>
+    <h4>Thông tin Nhóm người nhận</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.RecipientGroupName)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.RecipientGroupName)</dd>
+
+    </dl>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ID" />
+        <input type="submit" value="Xác nhận Xóa" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-secondary">Hủy bỏ và Quay lại Danh sách</a>
+    </form>
+</div>

@@ -1,0 +1,88 @@
+﻿@model DocumentManager.MVC.ViewModels.RecipientGroupMembersViewModel
+
+@{
+    ViewData["Title"] = $"Quản lý thành viên - {Model.GroupName}";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<div class="row">
+    <!-- Cột bên trái: Thêm thành viên mới -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h4>Thêm thành viên mới</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="AddMemberToGroup" method="post">
+                    @* Gửi đi GroupID để biết đang thao tác trên nhóm nào *@
+                    <input type="hidden" asp-for="GroupID" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="EmployeeIdToAdd" class="control-label">Chọn nhân viên</label>
+                        <select asp-for="EmployeeIdToAdd" class="form-control" asp-items="@Model.AvailableEmployees">
+                            <option value="">-- Chọn một nhân viên --</option>
+                        </select>
+                        <span asp-validation-for="EmployeeIdToAdd" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-plus-circle"></i> Thêm vào nhóm
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột bên phải: Danh sách thành viên hiện tại -->
+    <div class="col-md-8">
+        <h4>Danh sách thành viên hiện tại (@Model.Members.Count)</h4>
+        <table class="table table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th>Tên nhân viên</th>
+                    <th>Email</th>
+                    <th>Phòng ban</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Members.Any())
+                {
+                    @foreach (var member in Model.Members)
+                    {
+                        <tr>
+                            <td>@member.Name</td>
+                            <td>@member.Email</td>
+                            <td>@member.DepartmentName</td>
+                            <td>
+                                <form asp-action="RemoveMemberFromGroup" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhân viên này khỏi nhóm?');">
+                                    <input type="hidden" name="groupId" value="@Model.GroupID" />
+                                    <input type="hidden" name="employeeId" value="@member.ID" />
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash-alt"></i> Xóa
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center">Chưa có thành viên nào trong nhóm này.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<br />
+<div>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách Nhóm</a>
+</div>

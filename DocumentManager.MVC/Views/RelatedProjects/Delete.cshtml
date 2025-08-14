@@ -15,4 +15,9 @@
         <dd class="col-sm-9">@Html.DisplayFor(model => model.RelatedProjectName)</dd>
 
     </dl>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ID" />
+        <input type="submit" value="Xác nhận Xóa" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-secondary">Hủy bỏ và Quay lại Danh sách</a>
+    </form>
 </div>
