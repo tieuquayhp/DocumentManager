@@ -6,6 +6,11 @@ namespace DocumentManager.DAL.Models
     [Table("IncomingDocuments")]
     public class IncomingDocument
     {
+        public IncomingDocument()
+        {
+            // Khởi tạo danh sách để đảm bảo nó không bao giờ bị null
+            IncomingDocumentRecipientGroups = new List<IncomingDocumentRecipientGroup>();
+        }
         [Key]
         public int Id { get; set; }
         [Required(ErrorMessage = "Số văn bản đến không được để trống")]

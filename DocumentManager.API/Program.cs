@@ -2,8 +2,10 @@
 using DocumentManager.API.Mapping;
 using DocumentManager.DAL.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 
@@ -33,6 +35,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 52428800; // Giới hạn 50 MB
+});
 
 var app = builder.Build();
 
@@ -44,6 +50,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles(); // Cho phép phục vụ file từ wwwroot
 
 // Sử dụng chính sách CORS đã định nghĩa
 app.UseCors("AllowMvcApp");
@@ -51,5 +58,6 @@ app.UseCors("AllowMvcApp");
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();

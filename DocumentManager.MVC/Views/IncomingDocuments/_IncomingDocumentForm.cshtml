@@ -1,0 +1,50 @@
+﻿@model DocumentManager.MVC.ViewModels.IncomingDocumentCreateViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+@* Thêm trường ẩn cho ID, rất quan trọng cho việc Edit *@
+<input type="hidden" asp-for="ID" />
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <label asp-for="IncomingDocumentNumber" class="form-label"></label>
+        <input asp-for="IncomingDocumentNumber" class="form-control" />
+        <span asp-validation-for="IncomingDocumentNumber" class="text-danger"></span>
+    </div>
+    @* ... (Tất cả các trường input khác như ReleaseDate, IssuingUnitID, v.v...) ... *@
+    <div class="col-md-4">
+        <label asp-for="RelatedProjectID" class="form-label"></label>
+        <select asp-for="RelatedProjectID" class="form-select" asp-items="@Model.RelatedProjects">
+            <option value="">-- Chọn dự án --</option>
+        </select>
+        <span asp-validation-for="RelatedProjectID" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-12">
+        <label asp-for="DocumentContent" class="form-label"></label>
+        <textarea asp-for="DocumentContent" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="DocumentContent" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-12">
+        <label asp-for="SelectedRecipientGroupIDs" class="form-label"></label>
+        <select asp-for="SelectedRecipientGroupIDs" class="form-control" asp-items="@Model.AllRecipientGroups" multiple="multiple" size="5">
+        </select>
+        <span asp-validation-for="SelectedRecipientGroupIDs" class="text-danger"></span>
+        <small class="form-text text-muted">Giữ phím Ctrl (hoặc Command trên Mac) để chọn nhiều nhóm.</small>
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label">Tệp đính kèm hiện tại</label>
+        @if (!string.IsNullOrEmpty(Model.DocumentFile))
+        {
+            <p><a href="@Model.DocumentFile" target="_blank">@Model.DocumentFile</a></p>
+        }
+        else
+        {
+            <p><em>Chưa có tệp đính kèm.</em></p>
+        }
+        <label for="documentFile" class="form-label">Chọn tệp mới để thay thế (tùy chọn)</label>
+        <input name="documentFile" type="file" class="form-control" />
+    </div>
+</div>

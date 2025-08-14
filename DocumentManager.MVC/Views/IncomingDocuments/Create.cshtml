@@ -1,0 +1,23 @@
+﻿@model DocumentManager.MVC.ViewModels.IncomingDocumentCreateViewModel
+
+@{
+    ViewData["Title"] = "Phát hành Công văn đến";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<form asp-action="Create" enctype="multipart/form-data">
+    @await Html.PartialAsync("_IncomingDocumentForm", Model)
+
+    <div class="col-12 mt-4">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu và Phát hành</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy bỏ</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

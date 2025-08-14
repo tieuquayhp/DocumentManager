@@ -22,4 +22,8 @@
     <ProjectReference Include="..\DocumentManager.DAL\DocumentManager.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

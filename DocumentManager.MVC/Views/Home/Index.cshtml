@@ -35,7 +35,7 @@
 </style>
 
 <div class="text-center">
-    <h1 class="display-4">Chào mừng đến với Hệ thống Quản lý Tài liệu</h1>
+    <h1 class="display-4">Chào mừng đến với Hệ thống Quản lý Công văn</h1>
     <p>Nhanh chóng truy cập các chức năng chính hoặc xem các hoạt động gần đây.</p>
 </div>
 
@@ -49,7 +49,7 @@
             <div class="card quick-access-card text-center">
                 <div class="card-body">
                     <i class="fas fa-file-download card-icon mb-2"></i>
-                    <h5 class="card-title">Tài liệu đến</h5>
+                    <h5 class="card-title">Công văn đến</h5>
                 </div>
             </div>
         </a>
@@ -59,7 +59,7 @@
             <div class="card quick-access-card text-center">
                 <div class="card-body">
                     <i class="fas fa-file-upload card-icon mb-2"></i>
-                    <h5 class="card-title">Tài liệu đi</h5>
+                    <h5 class="card-title">Công văn đi</h5>
                 </div>
             </div>
         </a>
@@ -91,9 +91,9 @@
 <!-- Khu vực Hoạt động gần đây (ĐÃ CẬP NHẬT) -->
 <h3 class="mb-3">Hoạt động gần đây</h3>
 <div class="row">
-    <!-- Cột tài liệu đến mới nhất -->
+    <!-- Cột Công văn đến mới nhất -->
     <div class="col-md-6">
-        <h4><i class="fas fa-inbox text-success"></i> Tài liệu đến mới nhất</h4>
+        <h4><i class="fas fa-inbox text-success"></i> Công văn đến mới nhất</h4>
         <div class="list-group recent-docs-list">
             @if (Model.RecentIncomingDocuments != null && Model.RecentIncomingDocuments.Any())
             {
@@ -101,23 +101,22 @@
                 {
                     <a asp-controller="IncomingDocuments" asp-action="Details" asp-route-id="@doc.ID" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">@doc.IncomingDocumentNumber</h5>
+                            <h5 class="mb-1">Số công văn: @doc.IncomingDocumentNumber</h5>
                             <small>@doc.ReleaseDate.ToString("dd/MM/yyyy")</small>
                         </div>
-                        <p class="mb-1 text-truncate">@doc.DocumentContent</p>
-                        <small><strong>Từ:</strong> @doc.IssuingUnitName</small>
+                        <p class="mb-1 text-truncate">Nội dung: @doc.DocumentContent</p>
                     </a>
                 }
             }
             else
             {
-                <div class="alert alert-info">Không có tài liệu đến nào gần đây.</div>
+                <div class="alert alert-info">Không có Công văn đến nào gần đây.</div>
             }
         </div>
     </div>
-    <!-- Cột tài liệu đi mới nhất -->
+    <!-- Cột Công văn đi mới nhất -->
     <div class="col-md-6">
-        <h4><i class="fas fa-paper-plane text-primary"></i> Tài liệu đi mới nhất</h4>
+        <h4><i class="fas fa-paper-plane text-primary"></i> Công văn đi mới nhất</h4>
         <div class="list-group recent-docs-list">
             @if (Model.RecentOutgoingDocuments != null && Model.RecentOutgoingDocuments.Any())
             {
@@ -130,7 +129,7 @@
                         </div>
                         <p class="mb-1 text-truncate">@doc.DocumentContent</p>
                         @* 
-                           Vì một tài liệu có thể gửi đến nhiều nhóm, chúng ta sẽ không hiển thị chi tiết ở đây.
+                           Vì một Công văn có thể gửi đến nhiều nhóm, chúng ta sẽ không hiển thị chi tiết ở đây.
                            Một phương án đơn giản là chỉ hiển thị "Đã gửi đi".
                            Một phương án nâng cao hơn là phải gọi API để lấy danh sách nhóm, nhưng sẽ làm chậm trang chủ.
                         *@
@@ -140,7 +139,7 @@
             }
             else
             {
-                <div class="alert alert-info">Không có tài liệu đi nào gần đây.</div>
+                <div class="alert alert-info">Không có Công văn đi nào gần đây.</div>
             }
         </div>
     </div>

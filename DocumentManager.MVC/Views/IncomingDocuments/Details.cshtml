@@ -1,0 +1,134 @@
+﻿@* B1: Tiêm IConfiguration để có thể đọc appsettings.json *@
+@inject IConfiguration Configuration
+@model DocumentManager.MVC.ViewModels.IncomingDocumentViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết Tài liệu đến";
+
+    // B2: Chuẩn bị các biến cần thiết
+    var apiBaseUrl = Configuration["ApiSettings:BaseUrl"];
+    var fullFileUrl = !string.IsNullOrEmpty(Model.DocumentFile) ? $"{apiBaseUrl}{Model.DocumentFile}" : "";
+    var isPdf = !string.IsNullOrEmpty(Model.DocumentFile) && Model.DocumentFile.ToLower().EndsWith(".pdf");
+    var isImage = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp" }.Any(ext => !string.IsNullOrEmpty(Model.DocumentFile) && Model.DocumentFile.ToLower().EndsWith(ext));
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1>@ViewData["Title"]</h1>
+        <h4 class="text-muted">Số: @Model.IncomingDocumentNumber</h4>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-primary"><i class="fas fa-edit me-2"></i>Chỉnh sửa</a>
+        <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left me-2"></i>Quay lại Danh sách</a>
+    </div>
+</div>
+<hr />
+
+<div class="row">
+    <!-- CỘT BÊN TRÁI: THÔNG TIN CHI TIẾT -->
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <h5>Thông tin chung</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-5">@Html.DisplayNameFor(model => model.IncomingDocumentNumber)</dt>
+                    <dd class="col-sm-7">@Html.DisplayFor(model => model.IncomingDocumentNumber)</dd>
+
+                    <dt class="col-sm-5">@Html.DisplayNameFor(model => model.ReleaseDate)</dt>
+                    <dd class="col-sm-7">@Model.ReleaseDate.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-5">@Html.DisplayNameFor(model => model.IssuingUnitName)</dt>
+                    <dd class="col-sm-7">@Html.DisplayFor(model => model.IssuingUnitName)</dd>
+
+                    <dt class="col-sm-5">@Html.DisplayNameFor(model => model.RelatedProjectName)</dt>
+                    <dd class="col-sm-7">@Html.DisplayFor(model => model.RelatedProjectName)</dd>
+
+                    <dt class="col-sm-5">@Html.DisplayNameFor(model => model.DocumentCodeFromIssuer)</dt>
+                    <dd class="col-sm-7">@(Model.DocumentCodeFromIssuer ?? "N/A")</dd>
+
+                    <dt class="col-sm-5">@Html.DisplayNameFor(model => model.ReleaseDateFromIssuer)</dt>
+                    <dd class="col-sm-7">@Model.ReleaseDateFromIssuer.ToString("dd/MM/yyyy")</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>Nội dung và Phân phối</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-12">@Html.DisplayNameFor(model => model.DocumentContent)</dt>
+                    <dd class="col-sm-12" style="white-space: pre-wrap;">@Html.DisplayFor(model => model.DocumentContent)</dd>
+
+                    <dt class="col-sm-12 mt-3">@Html.DisplayNameFor(model => model.RecipientGroupNames)</dt>
+                    <dd class="col-sm-12">
+                        @if (Model.RecipientGroupNames != null && Model.RecipientGroupNames.Any())
+                        {
+                            foreach (var groupName in Model.RecipientGroupNames)
+                            {
+                                <span class="badge bg-primary me-1">@groupName</span>
+                            }
+                        }
+                        else
+                        {
+                            <span>Không có nhóm nhận nào.</span>
+                        }
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- CỘT BÊN PHẢI: BỘ XEM TỆP ĐÍNH KÈM -->
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Tệp đính kèm</h5>
+                @if (!string.IsNullOrEmpty(fullFileUrl))
+                {
+                    <a href="@fullFileUrl" target="_blank" class="btn btn-sm btn-outline-success">
+                        <i class="fas fa-download me-2"></i>Tải xuống
+                    </a>
+                }
+            </div>
+            <div class="card-body" style="min-height: 700px;">
+                @if (!string.IsNullOrEmpty(fullFileUrl))
+                {
+                    @if (isPdf)
+                    {
+                        // Cách đơn giản và hiệu quả nhất để nhúng PDF
+                        <iframe src="@fullFileUrl" style="width:100%; height:700px;" frameborder="0">
+                            Trình duyệt của bạn không hỗ trợ xem PDF trực tiếp. <a href="@fullFileUrl">Tải xuống tại đây.</a>
+                        </iframe>
+                    }
+                    else if (isImage)
+                    {
+                        <img src="@fullFileUrl" class="img-fluid border rounded" alt="Tệp đính kèm" />
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning text-center mt-5">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                            <h5 class="alert-heading">Không hỗ trợ xem trước</h5>
+                            <p>Không thể hiển thị trực tiếp loại tệp này. Vui lòng tải xuống để xem nội dung.</p>
+                            <a href="@fullFileUrl" class="btn btn-primary">
+                                <i class="fas fa-download me-2"></i> Tải xuống
+                            </a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-secondary text-center mt-5">
+                        <i class="fas fa-file-excel fa-2x mb-3"></i>
+                        <h5 class="alert-heading">Không có tệp đính kèm</h5>
+                        <p>Tài liệu này không có tệp đính kèm.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -19,6 +19,7 @@ namespace DocumentManager.API.DTOs
         public string IssuingUnitName { get; set; } = string.Empty;
         public int RelatedProjectID { get; set; }
         public string RelatedProjectName { get; set; } = string.Empty;
+        public List<string> RecipientGroupNames { get; set; } = new List<string>();
     }
 
     // DTO để tạo mới
@@ -28,18 +29,22 @@ namespace DocumentManager.API.DTOs
         public string IncomingDocumentNumber { get; set; } = string.Empty;
         [Required]
         public DateTime ReleaseDate { get; set; }
-        public string DocumentCodeFromIssuer { get; set; } = string.Empty;
-        public DateTime ReleaseDateFromIssuer { get; set; }
+        public string? DocumentCodeFromIssuer { get; set; }
+        public DateTime? ReleaseDateFromIssuer { get; set; }
         [Required]
         public string DocumentContent { get; set; } = string.Empty;
-        public string DocumentFile { get; set; } = string.Empty;
+
+        // Bỏ DocumentFile khỏi DTO
+        // public string? DocumentFile { get; set; }
+
         [Required]
         public int IssuingUnitID { get; set; }
         [Required]
         public int RelatedProjectID { get; set; }
 
-        // Thay RecipientGroupID bằng danh sách các ID
-        [Required]
+        // ĐƯA LẠI RecipientGroupIDs VÀO ĐÂY
+        [Required(ErrorMessage = "Vui lòng chọn ít nhất một nhóm nhận.")]
+        [MinLength(1, ErrorMessage = "Vui lòng chọn ít nhất một nhóm nhận.")]
         public List<int> RecipientGroupIDs { get; set; } = new List<int>();
     }
 

@@ -1,0 +1,25 @@
+﻿@model DocumentManager.MVC.ViewModels.IncomingDocumentCreateViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Công văn đến";
+}
+
+<h1>@ViewData["Title"]</h1>
+<p class="text-muted">Cập nhật thông tin cho Công văn số: @Model.IncomingDocumentNumber</p>
+<hr />
+
+<form asp-action="Edit" enctype="multipart/form-data">
+    @* Tái sử dụng lại toàn bộ các trường input từ Partial View *@
+    @await Html.PartialAsync("_IncomingDocumentForm", Model)
+
+    <div class="col-12 mt-4">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu thay đổi</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy bỏ</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

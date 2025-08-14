@@ -17,13 +17,16 @@ namespace DocumentManager.MVC.ViewModels
         public string DocumentContent { get; set; } = string.Empty;
         [Display(Name = "Tệp đính kèm")]
         public string DocumentFile { get; set; } = string.Empty;
+        public int IssuingUnitID { get; set; }
+        public int RelatedProjectID { get; set; }
         [Display(Name = "Đơn Vị Phát Hành")]
         public string IssuingUnitName { get; set; } = string.Empty;
         [Display(Name = "Dự Án Liên Quan")]
-        public string ProjectName { get; set; } = string.Empty;
+        public string RelatedProjectName { get; set; } = string.Empty;
 
         // Bỏ GroupName vì giờ có thể có nhiều nhóm
         // Thay vào đó, chúng ta có thể thêm một danh sách tên nhóm nếu cần hiển thị chi tiết
+        [Display(Name = "Nhóm người nhận")]
         public List<string> RecipientGroupNames { get; set; } = new List<string>();
     }
 }

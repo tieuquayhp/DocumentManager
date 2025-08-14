@@ -52,7 +52,10 @@ namespace DocumentManager.API.Mapping
             // IncomingDocument Mappings (ĐÃ SỬA LỖI TÊN THUỘC TÍNH)
             CreateMap<IncomingDocument, IncomingDocumentDto>()
                 .ForMember(dest => dest.IssuingUnitName, opt => opt.MapFrom(src => src.IssuingUnit.IssuingUnitName))
-                .ForMember(dest => dest.RelatedProjectName, opt => opt.MapFrom(src => src.RelatedProject.RelatedProjectName));
+                .ForMember(dest => dest.RelatedProjectName, opt => opt.MapFrom(src => src.RelatedProject.RelatedProjectName))
+                 .ForMember(dest => dest.RecipientGroupNames,
+               opt => opt.MapFrom(src => src.IncomingDocumentRecipientGroups
+                                             .Select(idrg => idrg.RecipientGroup.RecipientGroupName).ToList()));
 
             CreateMap<IncomingDocumentForCreationDto, IncomingDocument>();
             CreateMap<IncomingDocumentForUpdateDto, IncomingDocument>();
