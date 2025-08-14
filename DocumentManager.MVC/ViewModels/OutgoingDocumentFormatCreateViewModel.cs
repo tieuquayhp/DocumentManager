@@ -7,15 +7,15 @@ namespace DocumentManager.MVC.ViewModels
     {
         public int ID { get; set; }
 
-        [Display(Name = "Tên Định Dạng")]
+        [Display(Name = "Kiểu công văn đi")]
         [Required]
-        public string FormatName { get; set; }
+        public string OutgoingDocumentFormatName { get; set; }
 
-        [Display(Name = "Loại Tài Liệu")]
+        [Display(Name = "Loại Công văn đi")]
         [Required]
-        public int TypeID { get; set; }
+        public int OutgoingDocumentTypeID { get; set; }
 
         // Danh sách cho dropdown list
-        public IEnumerable<SelectListItem>? DocumentTypes { get; set; }
+        public IEnumerable<SelectListItem>? OutgoingDocumentType { get; set; }
     }
 }

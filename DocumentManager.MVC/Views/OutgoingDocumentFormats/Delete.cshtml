@@ -1,0 +1,33 @@
+﻿@model DocumentManager.MVC.ViewModels.OutgoingDocumentFormatViewModel
+
+@{
+    ViewData["Title"] = "Xóa Định dạng Tài liệu";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3 class="text-danger">Bạn có chắc chắn muốn xóa định dạng này không?</h3>
+<div>
+    <h4>Thông tin chi tiết</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.OutgoingDocumentFormatName)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.OutgoingDocumentFormatName)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.OutgoingDocumentTypeName)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.OutgoingDocumentTypeName)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ID" />
+        <input type="submit" value="Xác nhận Xóa" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-secondary">Hủy bỏ</a>
+    </form>
+</div>

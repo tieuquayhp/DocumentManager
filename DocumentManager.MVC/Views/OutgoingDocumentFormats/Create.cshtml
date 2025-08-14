@@ -1,0 +1,26 @@
+﻿@model DocumentManager.MVC.ViewModels.OutgoingDocumentFormatCreateViewModel
+
+@{
+    ViewData["Title"] = "Thêm Kiểu công văn đi";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            @await Html.PartialAsync("_FormatForm", Model)
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Tạo mới" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Quay lại Danh sách</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

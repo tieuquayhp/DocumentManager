@@ -1,0 +1,18 @@
+﻿@model DocumentManager.MVC.ViewModels.OutgoingDocumentFormatCreateViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input type="hidden" asp-for="ID" />
+
+<div class="form-group mb-3">
+    <label asp-for="OutgoingDocumentFormatName" class="control-label"></label>
+    <input asp-for="OutgoingDocumentFormatName" class="form-control" />
+    <span asp-validation-for="OutgoingDocumentFormatName" class="text-danger"></span>
+</div>
+
+<div class="form-group mb-3">
+    <label asp-for="OutgoingDocumentTypeID" class="control-label"></label>
+    <select asp-for="OutgoingDocumentTypeID" class="form-control" asp-items="@Model.OutgoingDocumentType">
+        <option value="">-- Chọn loại tài liệu --</option>
+    </select>
+    <span asp-validation-for="OutgoingDocumentTypeID" class="text-danger"></span>
+</div>
